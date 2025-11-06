@@ -1,0 +1,21 @@
+# Build artifacts
+bin/
+obj/
+
+# VS
+.vs/
+*.user
+*.suo
+*.cache
+*.userprefs
+
+# Rider
+.idea/
+*.sln.iml
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
+.DS_Store
