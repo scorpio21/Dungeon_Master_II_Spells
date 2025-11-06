@@ -1,0 +1,99 @@
+name: build-and-release
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install Inno Setup (Chocolatey)
+        shell: pwsh
+        run: |
+          choco install innosetup -y
+
+      - name: Restore
+        run: dotnet restore
+        working-directory: .
+
+      - name: Publish single-file win-x64
+        run: >
+          dotnet publish SpellBookWinForms.csproj -c Release -r win-x64 --self-contained true
+          /p:PublishSingleFile=true /p:PublishTrimmed=false -o publish/win-x64-singlefile
+
+      - name: Try build installer (Inno Setup)
+        shell: pwsh
+        run: |
+          $iscc = "$Env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe"
+          if (Test-Path $iscc) {
+            & $iscc installer.iss
+            Copy-Item -Force -Path .\Output\*.exe -Destination publish\
+          } else {
+            Write-Host "Inno Setup no instalado; se omite compilación de instalador"
+          }
+
+      - name: Archive artifact (zip)
+        shell: pwsh
+        run: |
+          New-Item -Force -ItemType Directory -Path publish | Out-Null
+          Compress-Archive -Force -Path publish/win-x64-singlefile/* -DestinationPath publish/SpellBookWinForms_win-x64_singlefile.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SpellBookWinForms_win-x64_singlefile
+          path: publish/SpellBookWinForms_win-x64_singlefile.zip
+      
+      - name: Upload installer artifact (if exists)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Installer
+          path: publish/*.exe
+
+  release:
+    if: github.event_name == 'release'
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish single-file win-x64
+        run: >
+          dotnet publish SpellBookWinForms.csproj -c Release -r win-x64 --self-contained true
+          /p:PublishSingleFile=true /p:PublishTrimmed=false -o publish/win-x64-singlefile
+
+      - name: Archive artifact (zip)
+        shell: pwsh
+        run: |
+          New-Item -Force -ItemType Directory -Path publish | Out-Null
+          Compress-Archive -Force -Path publish/win-x64-singlefile/* -DestinationPath publish/SpellBookWinForms_win-x64_singlefile.zip
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            publish/SpellBookWinForms_win-x64_singlefile.zip
+            publish/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
