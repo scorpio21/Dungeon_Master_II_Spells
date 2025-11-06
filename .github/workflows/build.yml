@@ -41,7 +41,6 @@ jobs:
           $iscc = "$Env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe"
           if (Test-Path $iscc) {
             & $iscc installer.iss
-            Copy-Item -Force -Path .\Output\*.exe -Destination publish\
           } else {
             Write-Host "Inno Setup no instalado; se omite compilación de instalador"
           }

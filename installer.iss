@@ -19,6 +19,7 @@ DefaultGroupName={#MyAppName}
 DisableDirPage=no
 DisableProgramGroupPage=no
 OutputBaseFilename=Grimorio_de_Hechizos_{#MyAppVersion}_Setup
+OutputDir=publish
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
