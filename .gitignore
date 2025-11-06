@@ -1,6 +1,8 @@
 # Build artifacts
 bin/
 obj/
+publish/
+=publish/
 
 # VS
 .vs/
@@ -8,10 +10,25 @@ obj/
 *.suo
 *.cache
 *.userprefs
+*.userosscache
+*.sln.docstates
 
 # Rider
 .idea/
 *.sln.iml
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
 
 # Logs
 *.log
@@ -19,3 +36,69 @@ obj/
 # OS
 Thumbs.db
 .DS_Store
+
+# Installer files
+*.msi
+*.msix
+*.msp
+*.msm
+
+# Visual Studio cache/options directory
+.vs/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+*.exe
+*.dll
+*.pdb
+*.dll.config
+*.cache
+*.exe.config
+*.publish
+*.nupkg
+*.zip
+*.msi
+*.msm
+*.msp
+*.msm.unsuccessfulbuild
+*.msm.eula.txt
+*.wixpdb
+*.wxl
+*.wixobj
+*.wixpdb
+*.tmp
+*.tmp_proj
+*.log
+*.tlog
+*.lastbuildstate
+*.idb
+*.pch
+*.tlb
+*.tli
+*.tlh
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# VS Code
+.vscode/
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Mono auto generated files
+mono_crash.*
+
+# Build results
+[Pp]ublish/

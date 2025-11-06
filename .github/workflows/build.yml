@@ -35,14 +35,38 @@ jobs:
           dotnet publish SpellBookWinForms.csproj -c Release -r win-x64 --self-contained true
           /p:PublishSingleFile=true /p:PublishTrimmed=false -o publish/win-x64-singlefile
 
-      - name: Try build installer (Inno Setup)
+      - name: Build installer (Inno Setup)
         shell: pwsh
         run: |
-          $iscc = "$Env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe"
-          if (Test-Path $iscc) {
-            & $iscc installer.iss
+          # Asegurarse de que el directorio de salida existe
+          New-Item -ItemType Directory -Force -Path publish | Out-Null
+          
+          # Verificar que Inno Setup está instalado
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            Write-Host "##[warning] Inno Setup no encontrado en $iscc"
+            exit 0
+          }
+          
+          # Mostrar versión de Inno Setup
+          Write-Host "##[info] Usando Inno Setup en: $iscc"
+          & $iscc /ver
+          
+          # Compilar el instalador
+          Write-Host "##[info] Compilando instalador..."
+          # Cambiar al directorio del proyecto
+          Set-Location $env:GITHUB_WORKSPACE
+          # Usar comillas alrededor de la ruta de salida para evitar problemas con espacios
+          & $iscc "/Sspawn=0" "/V=1" "/O$PSScriptRoot\\publish" "$PSScriptRoot\\installer.iss"
+          
+          # Verificar si se creó el instalador
+          $installer = Get-ChildItem -Path publish -Filter *.exe -Recurse | Select-Object -First 1
+          if ($installer) {
+            Write-Host "##[info] Instalador generado: $($installer.FullName)"
+            Write-Host "##[set-output name=installer_path]::$($installer.FullName)"
           } else {
-            Write-Host "Inno Setup no instalado; se omite compilación de instalador"
+            Write-Host "##[warning] No se encontró el instalador generado"
+            Get-ChildItem -Path publish -Recurse | Format-Table FullName | Out-String | Write-Host
           }
 
       - name: Archive artifact (zip)
@@ -57,12 +81,30 @@ jobs:
           name: SpellBookWinForms_win-x64_singlefile
           path: publish/SpellBookWinForms_win-x64_singlefile.zip
       
+      - name: Debug - List publish directories
+        shell: pwsh
+        run: |
+          Write-Host "=== Contenido del directorio publish: ==="
+          Get-ChildItem -Path publish -Recurse | Format-Table FullName
+          Write-Host "=== Buscando archivos .exe en publish/... ==="
+          Get-ChildItem -Path publish -Filter *.exe -Recurse | Format-Table FullName
+          Write-Host "=== Buscando directorio =publish/... ==="
+          if (Test-Path "=publish") {
+            Write-Host "Encontrado directorio =publish/ con contenido:"
+            Get-ChildItem -Path "=publish" -Recurse | Format-Table FullName
+          } else {
+            Write-Host "No se encontró el directorio =publish/"
+          }
+
       - name: Upload installer artifact (if exists)
         if: ${{ always() }}
+        id: upload-installer
         uses: actions/upload-artifact@v4
         with:
           name: Installer
-          path: publish/*.exe
+          path: "=publish/*.exe"
+          if-no-files-found: warn
+          retention-days: 1
 
   release:
     if: github.event_name == 'release'
@@ -93,6 +135,6 @@ jobs:
         with:
           files: |
             publish/SpellBookWinForms_win-x64_singlefile.zip
-            publish/*.exe
+            =publish/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
