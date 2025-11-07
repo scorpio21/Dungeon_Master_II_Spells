@@ -54,19 +54,19 @@ jobs:
           
           # Compilar el instalador
           Write-Host "##[info] Compilando instalador..."
-          # Cambiar al directorio del proyecto
-          Set-Location $env:GITHUB_WORKSPACE
-          # Usar comillas alrededor de la ruta de salida para evitar problemas con espacios
-          & $iscc "/Sspawn=0" "/V=1" "/O$PSScriptRoot\\publish" "$PSScriptRoot\\installer.iss"
+          # Usar la ruta completa del directorio de trabajo
+          $workingDir = Get-Location
+          & $iscc "/Sspawn=0" "/V=1" "/O$workingDir\\publish" "$workingDir\\installer.iss"
           
           # Verificar si se creó el instalador
-          $installer = Get-ChildItem -Path publish -Filter *.exe -Recurse | Select-Object -First 1
+          $installer = Get-ChildItem -Path "publish" -Filter "*.exe" -Recurse | Select-Object -First 1
           if ($installer) {
             Write-Host "##[info] Instalador generado: $($installer.FullName)"
-            Write-Host "##[set-output name=installer_path]::$($installer.FullName)"
+            # Mover el instalador a la raíz de publish para facilitar el acceso
+            Move-Item -Path $installer.FullName -Destination "publish\" -Force
           } else {
             Write-Host "##[warning] No se encontró el instalador generado"
-            Get-ChildItem -Path publish -Recurse | Format-Table FullName | Out-String | Write-Host
+            Get-ChildItem -Path "publish" -Recurse | Format-Table FullName | Out-String | Write-Host
           }
 
       - name: Archive artifact (zip)
@@ -81,60 +81,63 @@ jobs:
           name: SpellBookWinForms_win-x64_singlefile
           path: publish/SpellBookWinForms_win-x64_singlefile.zip
       
-      - name: Debug - List publish directories
+      - name: Listar archivos generados
         shell: pwsh
         run: |
           Write-Host "=== Contenido del directorio publish: ==="
-          Get-ChildItem -Path publish -Recurse | Format-Table FullName
+          Get-ChildItem -Path "publish" -Recurse | Format-Table FullName
           Write-Host "=== Buscando archivos .exe en publish/... ==="
-          Get-ChildItem -Path publish -Filter *.exe -Recurse | Format-Table FullName
-          Write-Host "=== Buscando directorio =publish/... ==="
-          if (Test-Path "=publish") {
-            Write-Host "Encontrado directorio =publish/ con contenido:"
-            Get-ChildItem -Path "=publish" -Recurse | Format-Table FullName
-          } else {
-            Write-Host "No se encontró el directorio =publish/"
-          }
+          Get-ChildItem -Path "publish" -Filter "*.exe" -Recurse | Format-Table FullName
 
-      - name: Upload installer artifact (if exists)
-        if: ${{ always() }}
-        id: upload-installer
+      - name: Subir artefactos
         uses: actions/upload-artifact@v4
         with:
-          name: Installer
-          path: "=publish/*.exe"
-          if-no-files-found: warn
+          name: ReleaseFiles
+          path: |
+            publish/SpellBookWinForms_win-x64_singlefile.zip
+            publish/*.exe
           retention-days: 1
 
-  release:
-    if: github.event_name == 'release'
-    runs-on: windows-latest
+  create-release:
     needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Obtener la versión del tag
+        id: get_version
+        run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Descargar artefactos
+        uses: actions/download-artifact@v4
         with:
-          dotnet-version: '8.0.x'
+          name: ReleaseFiles
+          path: release_assets
 
-      - name: Publish single-file win-x64
-        run: >
-          dotnet publish SpellBookWinForms.csproj -c Release -r win-x64 --self-contained true
-          /p:PublishSingleFile=true /p:PublishTrimmed=false -o publish/win-x64-singlefile
+      - name: Listar archivos descargados
+        run: ls -R release_assets/
 
-      - name: Archive artifact (zip)
-        shell: pwsh
-        run: |
-          New-Item -Force -ItemType Directory -Path publish | Out-Null
-          Compress-Archive -Force -Path publish/win-x64-singlefile/* -DestinationPath publish/SpellBookWinForms_win-x64_singlefile.zip
-
-      - name: Upload release asset
+      - name: Crear release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.ref }}
+          name: Versión ${{ steps.get_version.outputs.version }}
+          body: |
+            ## Cambios en esta versión
+            
+            Consulta el [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) para ver los cambios detallados.
+            
+            ## Instalación
+            
+            1. Descarga el archivo `Grimorio_de_Hechizos_*.exe`
+            2. Ejecuta el instalador y sigue las instrucciones
+            
+            ## Archivos incluidos
+            - `Grimorio_de_Hechizos_*.exe`: Instalador de la aplicación
+            - `SpellBookWinForms_win-x64_singlefile.zip`: Versión portable (sin instalar)
           files: |
-            publish/SpellBookWinForms_win-x64_singlefile.zip
-            =publish/*.exe
+            release_assets/*.exe
+            release_assets/*.zip
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
