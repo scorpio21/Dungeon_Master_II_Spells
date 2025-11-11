@@ -17,7 +17,7 @@ AppId={{7F15B6C5-17E0-4A9C-9A48-9E9C2C3F8C8A}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-DefaultDirName={pf64}\{#MyAppName}
+DefaultDirName={commonpf64}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableDirPage=no
 DisableProgramGroupPage=no
@@ -26,7 +26,7 @@ OutputDir=.\\publish
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-ArchitecturesInstallIn64BitMode=x64
+ArchitecturesInstallIn64BitMode=x64compatible
 
 [Languages]
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
