@@ -1,4 +1,4 @@
-# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.3
+# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.4
 
 Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conjuros de Dungeon Master II. Permite seleccionar el nivel de poder, la clase y el hechizo, mostrando iconografía, coste de maná y dificultad, de acuerdo con la tabla original del juego. Incluye una calculadora de monedas para conversiones entre diferentes tipos de monedas del juego.
 

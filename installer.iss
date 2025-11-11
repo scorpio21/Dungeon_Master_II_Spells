@@ -2,7 +2,7 @@
 ; Requires Inno Setup 6.x
 
 #define MyAppName "Grimorio de Hechizos"
-#define MyAppVersion "1.0.3"
+#define MyAppVersion "1.0.4"
 #define MyAppPublisher "scorpio21"
 #define MyAppExeName "SpellBookWinForms.exe"
 

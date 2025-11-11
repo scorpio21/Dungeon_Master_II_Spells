@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.4] - 2025-11-11
+
+### Añadido
+
+- Nuevos objetos con imágenes en `img/objetos/` (ej.: Guardia Esbirro, escudos, auras, dardo/nube venenosa, bola de fuego, rayo, etc.)
+- Archivo `GUIA_COMPILAR_E_INSTALAR.txt` con pasos para compilar y generar el instalador
+
+### Mejorado
+
+- Carga de imágenes más robusta: intenta primero el archivo con extensión y libera la imagen previa para evitar bloqueos
+
+### Corregido
+
+- Al seleccionar una poción ahora se muestra el frasco vacío hasta pulsar "Mostrar hechizo"
+- Mapeos de objetos ajustados para apuntar a archivos con extensión (p.ej., `guardia.png`)
+
 ## [1.0.3] - 2025-11-11
 
 ### Añadido
