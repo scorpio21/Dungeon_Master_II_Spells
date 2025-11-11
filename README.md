@@ -1,6 +1,6 @@
-# Grimorio de Hechizos – Dungeon Master II (WinForms)
+# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.3
 
-Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conjuros de Dungeon Master II. Permite seleccionar el nivel de poder, la clase y el hechizo, mostrando iconografía, coste de maná y dificultad, de acuerdo con la tabla original del juego.
+Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conjuros de Dungeon Master II. Permite seleccionar el nivel de poder, la clase y el hechizo, mostrando iconografía, coste de maná y dificultad, de acuerdo con la tabla original del juego. Incluye una calculadora de monedas para conversiones entre diferentes tipos de monedas del juego.
 
 - Framework: .NET 8.0 (Windows)
 - UI: Windows Forms (formulario editable desde Visual Studio)
@@ -12,6 +12,13 @@ Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conju
 
 - Selector de nivel de poder (Lo, Um, On, Ee, Pal, Mon).
 - Listado de hechizos por clase (Priest/Wizard) con símbolos y efecto.
+- Calculadora de monedas con conversión entre diferentes tipos:
+  - Monedas de Cobre (1)
+  - Monedas de Plata (4)
+  - Monedas de Oro (16)
+  - Gemas Verdes (64)
+  - Gemas Rojas (256)
+  - Gemas Azules (1024)
 - Cálculo del coste total de Maná/Dificultad por nivel:
   - Poder = nivel (1..6).
   - Cada símbolo escala como floor(PL1 × (nivel + 1) / 2).
@@ -33,6 +40,7 @@ Magias/
     Program.cs
     MainForm.cs
     MainForm.Designer.cs
+    MonedasForm.cs
     MainForm.resx
     README.md
     .gitignore
@@ -40,6 +48,14 @@ Magias/
       lo.png, um.png, ...
     img/posiones/            # Frascos de pociones
       Health.gif, Mana.gif, Shield.gif, vacia.png, ...
+    img/objetos/             # Objetos varios
+      monedas/               # Imágenes de monedas y gemas
+        Copper_Coin.png
+        Silver_Coin.png
+        oro.png
+        Green_Gem.png
+        Red_Gem.png
+        Blue_Gem.png
 ```
 
 ## Colocación de recursos (imágenes)
@@ -48,6 +64,9 @@ Magias/
   - Ejemplos: `lo.png`, `um.png`, `on.png`, `ee.png`, `pal.png`, `mon.png`, `ya.png`, `vi.png`, etc.
   - Se soporta `.png` y `.gif` en mayúsculas/minúsculas.
 - Frascos de pociones: `img/posiones/`
+- Imágenes de monedas: `img/objetos/monedas/`
+  - `Copper_Coin.png`, `Silver_Coin.png`, `oro.png`
+  - `Green_Gem.png`, `Red_Gem.png`, `Blue_Gem.png`
   - Ejemplos: `Health.gif`, `Mana.gif`, `Shield.gif`, `vacia.png`, `veneno.gif`.
 
 La aplicación detecta primero `img/` dentro de la carpeta del proyecto y, si no existe, busca rutas alternativas conocidas.
@@ -67,6 +86,12 @@ dotnet build -c Debug
 # Ejecutar
 dotnet run
 ```
+
+## Cambios en la versión 1.0.3
+
+- **Nueva característica**: Añadida calculadora de monedas con conversión entre diferentes tipos de moneda del juego.
+- **Mejora**: Actualizada la interfaz de usuario para mostrar imágenes de monedas.
+- **Correcciones**: Mejorado el manejo de imágenes y recursos.
 
 ## Uso
 

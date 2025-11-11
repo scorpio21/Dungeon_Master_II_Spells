@@ -2,7 +2,7 @@
 ; Requires Inno Setup 6.x
 
 #define MyAppName "Grimorio de Hechizos"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.3"
 #define MyAppPublisher "scorpio21"
 #define MyAppExeName "SpellBookWinForms.exe"
 
@@ -21,7 +21,7 @@ DefaultDirName={pf64}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableDirPage=no
 DisableProgramGroupPage=no
-OutputBaseFilename=Grimorio_de_Hechizos_{#MyAppVersion}_Setup
+OutputBaseFilename=Grimorio_de_Hechizos_v{#MyAppVersion}_Setup
 OutputDir=.\\publish
 Compression=lzma
 SolidCompression=yes
