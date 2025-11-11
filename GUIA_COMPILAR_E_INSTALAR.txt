@@ -1,0 +1,58 @@
+Guía: Compilar, Preparar y Regenerar Instalador (Inno Setup)
+
+Proyecto: Grimorio de Hechizos (WinForms .NET 8)
+Versión instalador: 1.0.3
+
+1) Preparar cambios en imágenes y código
+- Coloca nuevas imágenes de objetos en: img/objetos/
+- Coloca imágenes de pociones en: img/posiones/
+- Mapea nuevos objetos en el método: MapearObjeto(string nombreObjeto)
+  Ejemplo: "Guardia Esbirro" => ("guardia.png", true)
+- Guarda cambios y haz commit/push si corresponde.
+
+2) Publicar binarios (Release, self-contained, single-file)
+Ejecutar en PowerShell desde la carpeta del proyecto: L:\Magias\SpellBookWinForms_Clean
+
+# Limpieza de carpeta de publicación (opcional pero recomendado)
+Remove-Item -Path .\publish\* -Recurse -Force
+
+# Publicar binarios actualizados
+dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false -o publish/win-x64-singlefile
+
+# Verificar el ejecutable publicado
+Get-Item .\publish\win-x64-singlefile\SpellBookWinForms.exe | Select-Object Name, LastWriteTime, Length
+
+3) Generar el instalador con Inno Setup
+- Requisitos: Inno Setup 6 instalado (ruta por defecto: C:\Program Files (x86)\Inno Setup 6\ISCC.exe)
+
+# Compilar installer.iss y generar el .exe
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "/Sspawn=0" "/V=1" "/O$pwd\publish" "$pwd\installer.iss"
+
+# Salida esperada del instalador
+L:\Magias\SpellBookWinForms_Clean\publish\Grimorio_de_Hechizos_v1.0.3_Setup.exe
+
+4) Verificar que el instalador incluya los archivos nuevos
+- Comprueba que el paso de compresión lista imágenes de img/objetos y img/posiones.
+- Si falta algún archivo, revisa:
+  * Que el archivo exista en la ruta correcta (por ejemplo: img/objetos/guardia.png)
+  * Que esté versionado (git add) si vas a distribuir por release
+  * Que el nombre en MapearObjeto coincida EXACTAMENTE con el texto del combo
+
+5) Probar instalación
+- Ejecuta el instalador generado y verifica:
+  * Que aparece el menú Utilidades → Calculadora de Monedas
+  * Que las pociones muestran frasco vacío al seleccionar y la imagen completa al pulsar "Mostrar hechizo"
+  * Que los objetos nuevos (p.ej., Guardia Esbirro) muestran su imagen al pulsar "Mostrar hechizo"
+
+6) Fallback: limpieza completa si algo queda obsoleto
+# Borrar publicación anterior y reconstruir todo
+Remove-Item -Path .\publish\* -Recurse -Force
+dotnet clean
+dotnet restore
+dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false -o publish/win-x64-singlefile
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "/Sspawn=0" "/V=1" "/O$pwd\publish" "$pwd\installer.iss"
+
+Notas
+- El script installer.iss incluye automáticamente la carpeta publish\win-x64-singlefile y la carpeta img (con subcarpetas).
+- Arquitectura: x64. Salen warnings informativos de Inno Setup (se pueden ignorar).
+- Asegúrate de ejecutar los comandos desde L:\Magias\SpellBookWinForms_Clean.
