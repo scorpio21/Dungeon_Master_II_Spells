@@ -25,6 +25,16 @@ Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conju
 - Iconografía de símbolos y frascos de pociones.
 - Tooltips con descripción y familia de cada símbolo.
 
+## Capturas
+
+<p align="center">
+  <img src="img/menu.png" alt="Menú de la aplicación" width="600">
+  
+</p>
+<p align="center">
+  <img src="img/monedas.png" alt="Calculadora de Monedas" width="600">
+</p>
+
 ## Requisitos
 
 - Windows 10/11
