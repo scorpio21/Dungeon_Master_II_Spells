@@ -359,6 +359,19 @@ namespace SpellBookWinForms
             var subcarpeta = esObjeto ? "objetos" : "posiones";
             var baseDir = Path.Combine(BaseImgPath(), subcarpeta);
             
+            // Si el nombre ya incluye una extensión, intentar ese archivo exacto primero
+            var extNombre = Path.GetExtension(nombreArchivo);
+            if (!string.IsNullOrEmpty(extNombre))
+            {
+                var rutaExacta = Path.Combine(baseDir, nombreArchivo);
+                if (File.Exists(rutaExacta))
+                {
+                    if (picFrasco.Image != null) { var old = picFrasco.Image; picFrasco.Image = null; old.Dispose(); }
+                    picFrasco.Image = Image.FromFile(rutaExacta);
+                    return;
+                }
+            }
+
             // Buscar la imagen con diferentes extensiones
             string[] extensiones = { "", ".png", ".gif", ".bmp", ".jpg", ".jpeg" };
             
@@ -367,6 +380,7 @@ namespace SpellBookWinForms
                 string rutaCompleta = Path.Combine(baseDir, $"{nombreArchivo}{ext}");
                 if (File.Exists(rutaCompleta))
                 {
+                    if (picFrasco.Image != null) { var old = picFrasco.Image; picFrasco.Image = null; old.Dispose(); }
                     picFrasco.Image = Image.FromFile(rutaCompleta);
                     return;
                 }
@@ -410,6 +424,7 @@ namespace SpellBookWinForms
             {
                 "Antorcha" => ("antorcha", true),
                 "Esbirro de Ataque" => ("esbirro", true),
+                "Guardia Esbirro" => ("guardia.png", true),
                 // Agregar más objetos aquí cuando sea necesario
                 // Ejemplo:
                 // "Llave" => ("llave", true),
