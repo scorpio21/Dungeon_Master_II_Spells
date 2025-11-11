@@ -147,17 +147,14 @@ namespace SpellBookWinForms
         {
             LimpiarResultados();
             
-            // Solo mostrar el frasco vacío si es una poción
+            // Mostrar el frasco vacío para todas las selecciones
+            // La imagen completa se cargará solo al hacer clic en "Mostrar Hechizo"
+            picFrasco.Image = null;
+            
+            // Si es una poción, cargar el frasco vacío
             if (cbHechizo.SelectedItem is string hechizo && EsPocion(hechizo))
             {
-                var (imagenHechizo, _) = MapearImagenFrasco(hechizo);
-                CargarImagenFrasco(imagenHechizo, esObjeto: false);
-            }
-            else
-            {
-                // Para otros hechizos, incluyendo objetos como la antorcha,
-                // no mostramos la imagen hasta que se haga clic en "Mostrar Hechizo"
-                picFrasco.Image = null;
+                CargarImagenFrasco("vacia.png", esObjeto: false);
             }
         }
 
@@ -416,7 +413,7 @@ namespace SpellBookWinForms
                 // Agregar más objetos aquí cuando sea necesario
                 // Ejemplo:
                 // "Llave" => ("llave", true),
-                _ => (string.Empty, false)  // Valor por defecto si no coincide ningún objeto
+                _ => ("vacia.png", false)  // Valor por defecto si no coincide ningún objeto
             };
         }
 
