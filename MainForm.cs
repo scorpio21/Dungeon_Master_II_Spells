@@ -15,54 +15,60 @@ namespace SpellBookWinForms
         private readonly Dictionary<string, string> _simboloFamilia;
         private readonly Dictionary<string, int> _poderMap = new() { {"Lo",1},{"Um",2},{"On",3},{"Ee",4},{"Pal",5},{"Mon",6} };
 
+        private MenuStrip menuPrincipal = null!;  // Inicialización no nula asegurada en el constructor
+        private ToolStripMenuItem menuUtilidades = null!;
+        private ToolStripMenuItem menuCalculadoraMonedas = null!;
+
         public MainForm()
         {
             InitializeComponent();
+            InicializarMenu();
 
             // Datos: mismos que en Python
-            _hechizos = new()
-            {
-                ["Priest"] = new()
-                {
-                    ["Health Potion"] = ("Vi", "Recupera salud"),
-                    ["Stamina Potion"] = ("Ya", "Recupera energía"),
-                    ["Mana Potion"] = ("Zo Bro Ra", "Restaura maná"),
-                    ["Strength Potion"] = ("Ful Bro Ku", "Aumenta fuerza"),
-                    ["Dexterity Potion"] = ("Oh Bro Ros", "Mejora destreza"),
-                    ["Wisdom Potion"] = ("Ya Bro Dain", "Mejora sabiduría"),
-                    ["Vitality Potion"] = ("Ya Bro Neta", "Mejora vitalidad"),
-                    ["Cure Poison"] = ("Vi Bro", "Elimina veneno"),
-                    ["Shield Potion"] = ("Ya Bro", "Protección personal"),
-                    ["Fire Shield"] = ("Ful Bro Neta", "Escudo de fuego"),
-                    ["Shield (Party)"] = ("Ya Ir", "Protección grupal"),
-                    ["Darkness"] = ("Des Ir Sar", "Oscurece el entorno"),
-                    ["Aura of Strength"] = ("Oh Ew Ku", "Aumenta fuerza del grupo"),
-                    ["Aura of Dexterity"] = ("Oh Ew Ros", "Aumenta destreza del grupo"),
-                    ["Aura of Vitality"] = ("Oh Ew Neta", "Aumenta vitalidad del grupo"),
-                    ["Aura of Wisdom"] = ("Oh Ew Dain", "Aumenta sabiduría del grupo"),
-                    ["Spell Shield"] = ("Ya Ir Dain", "Protección mágica"),
-                    ["Carry Minion"] = ("Zo Ew Ros", "Transporta esbirro"),
-                    ["Spell Reflection"] = ("Zo Bro Ros", "Refleja hechizos"),
-                    ["Guard Minion"] = ("Zo Ew Neta", "Protege esbirro"),
-                },
-                ["Wizard"] = new()
-                {
-                    ["Torch"] = ("Ful", "Crea una antorcha mágica"),
-                    ["Light"] = ("Oh Ir Ra", "Ilumina el entorno"),
-                    ["Open Door"] = ("Zo", "Abre puertas cercanas"),
-                    ["Invisibility"] = ("Oh Ew Sar", "Vuelve al grupo invisible"),
-                    ["Poison Bolt"] = ("Des Ven", "Dispara un proyectil venenoso"),
-                    ["Poison Cloud"] = ("Oh Ven", "Genera una nube tóxica"),
-                    ["Weaken Nonmaterial Beings"] = ("Des Ew", "Debilita seres no materiales"),
-                    ["Fireball"] = ("Ful Ir", "Explosión de fuego"),
-                    ["Lightning Bolt"] = ("Oh Kath Ra", "Rayo eléctrico"),
-                    ["Magic Marker"] = ("Ya Ew", "Marca mágica"),
-                    ["Push"] = ("Oh Kath Ku", "Empuja objetos o enemigos"),
-                    ["Pull"] = ("Oh Kath Ros", "Atrae objetos o enemigos"),
-                    ["Aura Of Speed"] = ("Oh Ir Ros", "Aumenta velocidad del grupo"),
-                    ["Attack Minion"] = ("Zo Ew Ku", "Ataca a un esbirro"),
-                }
-            };
+     _hechizos = new()
+{
+    ["Sacerdote"] = new()
+    {
+        ["Poción de Salud"] = ("Vi", "Recupera salud"),
+        ["Poción de Energía"] = ("Ya", "Recupera energía"),
+        ["Poción de Maná"] = ("Zo Bro Ra", "Restaura maná"),
+        ["Poción de Fuerza"] = ("Ful Bro Ku", "Aumenta fuerza"),
+        ["Poción de Destreza"] = ("Oh Bro Ros", "Mejora destreza"),
+        ["Poción de Sabiduría"] = ("Ya Bro Dain", "Mejora sabiduría"),
+        ["Poción de Vitalidad"] = ("Ya Bro Neta", "Mejora vitalidad"),
+        ["Curar Veneno"] = ("Vi Bro", "Elimina veneno"),
+        ["Poción de Escudo"] = ("Ya Bro", "Protección personal"),
+        ["Escudo de Fuego"] = ("Ful Bro Neta", "Escudo de fuego"),
+        ["Escudo Grupal"] = ("Ya Ir", "Protección grupal"),
+        ["Oscuridad"] = ("Des Ir Sar", "Oscurece el entorno"),
+        ["Aura de Fuerza"] = ("Oh Ew Ku", "Aumenta fuerza del grupo"),
+        ["Aura de Destreza"] = ("Oh Ew Ros", "Aumenta destreza del grupo"),
+        ["Aura de Vitalidad"] = ("Oh Ew Neta", "Aumenta vitalidad del grupo"),
+        ["Aura de Sabiduría"] = ("Oh Ew Dain", "Aumenta sabiduría del grupo"),
+        ["Escudo Mágico"] = ("Ya Ir Dain", "Protección mágica"),
+        ["Transportar Esbirro"] = ("Zo Ew Ros", "Transporta esbirro"),
+        ["Reflejo de Hechizos"] = ("Zo Bro Ros", "Refleja hechizos"),
+        ["Guardia Esbirro"] = ("Zo Ew Neta", "Protege esbirro"),
+    },
+    ["Mago"] = new()
+    {
+        ["Antorcha"] = ("Ful", "Crea una antorcha mágica"),
+        ["Luz"] = ("Oh Ir Ra", "Ilumina el entorno"),
+        ["Abrir Puerta"] = ("Zo", "Abre puertas cercanas"),
+        ["Invisibilidad"] = ("Oh Ew Sar", "Vuelve al grupo invisible"),
+        ["Dardo Venenoso"] = ("Des Ven", "Dispara un proyectil venenoso"),
+        ["Nube Venenosa"] = ("Oh Ven", "Genera una nube tóxica"),
+        ["Debilitar Seres Inmateriales"] = ("Des Ew", "Debilita seres no materiales"),
+        ["Bola de Fuego"] = ("Ful Ir", "Explosión de fuego"),
+        ["Rayo"] = ("Oh Kath Ra", "Rayo eléctrico"),
+        ["Marca Mágica"] = ("Ya Ew", "Marca mágica"),
+        ["Empujar"] = ("Oh Kath Ku", "Empuja objetos o enemigos"),
+        ["Atraer"] = ("Oh Kath Ros", "Atrae objetos o enemigos"),
+        ["Aura de Velocidad"] = ("Oh Ir Ros", "Aumenta velocidad del grupo"),
+        ["Esbirro de Ataque"] = ("Zo Ew Ku", "Ataca a un esbirro"),
+    }
+};
+
 
             _valoresPL1 = new()
             {
@@ -140,13 +146,17 @@ namespace SpellBookWinForms
         private void cbHechizo_SelectedIndexChanged(object? sender, EventArgs e)
         {
             LimpiarResultados();
-            // Cargar frasco vacío si aplica
+            
+            // Solo mostrar el frasco vacío si es una poción
             if (cbHechizo.SelectedItem is string hechizo && EsPocion(hechizo))
             {
-                CargarImagenFrasco("vacia.png");
+                var (imagenHechizo, _) = MapearImagenFrasco(hechizo);
+                CargarImagenFrasco(imagenHechizo, esObjeto: false);
             }
             else
             {
+                // Para otros hechizos, incluyendo objetos como la antorcha,
+                // no mostramos la imagen hasta que se haga clic en "Mostrar Hechizo"
                 picFrasco.Image = null;
             }
         }
@@ -169,11 +179,12 @@ namespace SpellBookWinForms
                 pnlDetalles.Controls.Add(l);
             }
 
-            // Frasco
-            if (EsPocion(hechizo))
-                CargarImagenFrasco(MapearImagenFrasco(hechizo));
-            else
-                picFrasco.Image = null;
+            // Cargar la imagen del hechizo u objeto
+            var (imagenHechizo, esObjeto) = MapearImagenFrasco(hechizo);
+            if (imagenHechizo != "vacia.png")
+            {
+                CargarImagenFrasco(imagenHechizo, esObjeto);
+            }
 
             // Símbolos
             RenderSimbolos(simbolos);
@@ -340,38 +351,100 @@ namespace SpellBookWinForms
         private bool EsPocion(string hechizo)
         {
             // Considera poción si el mapeo devuelve un frasco distinto de 'vacia.png'
-            var archivo = MapearImagenFrasco(hechizo);
-            return !string.Equals(archivo, "vacia.png", StringComparison.OrdinalIgnoreCase);
+            // y no es un objeto
+            var (archivo, esObjeto) = MapearImagenFrasco(hechizo);
+            return !esObjeto && !string.Equals(archivo, "vacia.png", StringComparison.OrdinalIgnoreCase);
         }
 
-        private void CargarImagenFrasco(string nombreArchivo)
+        private void CargarImagenFrasco(string nombreArchivo, bool esObjeto = false)
         {
-            var baseDir = Path.Combine(BaseImgPath(), "posiones");
-            string[] candidatos = new[]
+            // Determinar el directorio base según si es un objeto o una poción
+            var subcarpeta = esObjeto ? "objetos" : "posiones";
+            var baseDir = Path.Combine(BaseImgPath(), subcarpeta);
+            
+            // Buscar la imagen con diferentes extensiones
+            string[] extensiones = { "", ".png", ".gif", ".bmp", ".jpg", ".jpeg" };
+            
+            foreach (var ext in extensiones)
             {
-                Path.Combine(baseDir, nombreArchivo),
-                Path.Combine(baseDir, Path.ChangeExtension(nombreArchivo, ".png")),
-                Path.Combine(baseDir, Path.ChangeExtension(nombreArchivo, ".gif")),
-            };
-            string? encontrado = candidatos.FirstOrDefault(File.Exists);
-            picFrasco.Image = encontrado != null ? Image.FromFile(encontrado) : null;
+                string rutaCompleta = Path.Combine(baseDir, $"{nombreArchivo}{ext}");
+                if (File.Exists(rutaCompleta))
+                {
+                    picFrasco.Image = Image.FromFile(rutaCompleta);
+                    return;
+                }
+            }
+            
+            // Si no se encuentra la imagen, limpiar
+            picFrasco.Image = null;
         }
 
-        private string MapearImagenFrasco(string hechizo)
+        private (string archivo, bool esObjeto) MapearImagenFrasco(string hechizo)
         {
+            // Primero verificamos si es un objeto
+            var objeto = MapearObjeto(hechizo);
+            if (objeto.archivo != "vacia.png")
+            {
+                return objeto;
+            }
+            
+            // Si no es un objeto, verificamos si es una poción
             return hechizo switch
             {
-                "Health Potion" => "Health.gif",
-                "Stamina Potion" => "Stamina.png",
-                "Mana Potion" => "Mana.gif",
-                "Strength Potion" => "Strength.gif",
-                "Dexterity Potion" => "Dexterity.gif",
-                "Wisdom Potion" => "Wisdom.gif",
-                "Vitality Potion" => "Vitality.gif",
-                "Shield Potion" => "Shield.gif",
-                "Cure Poison" => "veneno.gif",
-                _ => "vacia.png"
+                // Pociones (van en la carpeta posiones/)
+                "Poción de Salud" => ("Health.gif", false),
+                "Poción de Energía" => ("Stamina.png", false),
+                "Poción de Maná" => ("Mana.gif", false),
+                "Poción de Fuerza" => ("Strength.gif", false),
+                "Poción de Destreza" => ("Dexterity.gif", false),
+                "Poción de Sabiduría" => ("Wisdom.gif", false),
+                "Poción de Vitalidad" => ("Vitality.gif", false),
+                "Poción de Escudo" => ("Shield.gif", false),
+                "Curar Veneno" => ("veneno.gif", false),
+                
+                // Por defecto
+                _ => ("vacia.png", false)
             };
+        }
+        
+        private (string archivo, bool esObjeto) MapearObjeto(string nombreObjeto)
+        {
+            return nombreObjeto switch
+            {
+                "Antorcha" => ("antorcha", true),
+                "Esbirro de Ataque" => ("esbirro", true),
+                // Agregar más objetos aquí cuando sea necesario
+                // Ejemplo:
+                // "Llave" => ("llave", true),
+                _ => (string.Empty, false)  // Valor por defecto si no coincide ningún objeto
+            };
+        }
+
+        private void InicializarMenu()
+        {
+            // Crear la barra de menú
+            menuPrincipal = new MenuStrip();
+            
+            // Menú de Utilidades
+            menuUtilidades = new ToolStripMenuItem("Utilidades");
+            
+            // Opción de Calculadora de Monedas
+            menuCalculadoraMonedas = new ToolStripMenuItem("Calculadora de Monedas");
+            menuCalculadoraMonedas.Click += (s, e) =>
+            {
+                var monedasForm = new MonedasForm();
+                monedasForm.ShowDialog();
+            };
+            
+            // Agregar opciones al menú
+            menuUtilidades.DropDownItems.Add(menuCalculadoraMonedas);
+            
+            // Agregar menú principal
+            menuPrincipal.Items.Add(menuUtilidades);
+            
+            // Asignar el menú al formulario
+            this.MainMenuStrip = menuPrincipal;
+            this.Controls.Add(menuPrincipal);
         }
     }
 }

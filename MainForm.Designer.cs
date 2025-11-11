@@ -68,9 +68,11 @@ namespace SpellBookWinForms
             gbPoder.Controls.Add(rbOn);
             gbPoder.Controls.Add(rbUm);
             gbPoder.Controls.Add(rbLo);
-            gbPoder.Location = new System.Drawing.Point(12, 12);
+            gbPoder.Location = new Point(17, 20);
+            gbPoder.Margin = new Padding(4, 5, 4, 5);
             gbPoder.Name = "gbPoder";
-            gbPoder.Size = new System.Drawing.Size(760, 60);
+            gbPoder.Padding = new Padding(4, 5, 4, 5);
+            gbPoder.Size = new Size(1086, 100);
             gbPoder.TabIndex = 0;
             gbPoder.TabStop = false;
             gbPoder.Text = "Nivel de Poder";
@@ -78,9 +80,10 @@ namespace SpellBookWinForms
             // rbMon
             // 
             rbMon.AutoSize = true;
-            rbMon.Location = new System.Drawing.Point(630, 25);
+            rbMon.Location = new Point(900, 42);
+            rbMon.Margin = new Padding(4, 5, 4, 5);
             rbMon.Name = "rbMon";
-            rbMon.Size = new System.Drawing.Size(90, 19);
+            rbMon.Size = new Size(143, 29);
             rbMon.TabIndex = 5;
             rbMon.TabStop = true;
             rbMon.Text = "Nivel 6 (Mon)";
@@ -89,9 +92,10 @@ namespace SpellBookWinForms
             // rbPal
             // 
             rbPal.AutoSize = true;
-            rbPal.Location = new System.Drawing.Point(510, 25);
+            rbPal.Location = new Point(729, 42);
+            rbPal.Margin = new Padding(4, 5, 4, 5);
             rbPal.Name = "rbPal";
-            rbPal.Size = new System.Drawing.Size(90, 19);
+            rbPal.Size = new Size(128, 29);
             rbPal.TabIndex = 4;
             rbPal.TabStop = true;
             rbPal.Text = "Nivel 5 (Pal)";
@@ -100,9 +104,10 @@ namespace SpellBookWinForms
             // rbEe
             // 
             rbEe.AutoSize = true;
-            rbEe.Location = new System.Drawing.Point(390, 25);
+            rbEe.Location = new Point(557, 42);
+            rbEe.Margin = new Padding(4, 5, 4, 5);
             rbEe.Name = "rbEe";
-            rbEe.Size = new System.Drawing.Size(88, 19);
+            rbEe.Size = new Size(124, 29);
             rbEe.TabIndex = 3;
             rbEe.TabStop = true;
             rbEe.Text = "Nivel 4 (Ee)";
@@ -111,9 +116,10 @@ namespace SpellBookWinForms
             // rbOn
             // 
             rbOn.AutoSize = true;
-            rbOn.Location = new System.Drawing.Point(270, 25);
+            rbOn.Location = new Point(386, 42);
+            rbOn.Margin = new Padding(4, 5, 4, 5);
             rbOn.Name = "rbOn";
-            rbOn.Size = new System.Drawing.Size(94, 19);
+            rbOn.Size = new Size(130, 29);
             rbOn.TabIndex = 2;
             rbOn.TabStop = true;
             rbOn.Text = "Nivel 3 (On)";
@@ -122,9 +128,10 @@ namespace SpellBookWinForms
             // rbUm
             // 
             rbUm.AutoSize = true;
-            rbUm.Location = new System.Drawing.Point(150, 25);
+            rbUm.Location = new Point(214, 42);
+            rbUm.Margin = new Padding(4, 5, 4, 5);
             rbUm.Name = "rbUm";
-            rbUm.Size = new System.Drawing.Size(97, 19);
+            rbUm.Size = new Size(134, 29);
             rbUm.TabIndex = 1;
             rbUm.TabStop = true;
             rbUm.Text = "Nivel 2 (Um)";
@@ -134,9 +141,10 @@ namespace SpellBookWinForms
             // 
             rbLo.AutoSize = true;
             rbLo.Checked = true;
-            rbLo.Location = new System.Drawing.Point(30, 25);
+            rbLo.Location = new Point(43, 42);
+            rbLo.Margin = new Padding(4, 5, 4, 5);
             rbLo.Name = "rbLo";
-            rbLo.Size = new System.Drawing.Size(91, 19);
+            rbLo.Size = new Size(125, 29);
             rbLo.TabIndex = 0;
             rbLo.TabStop = true;
             rbLo.Text = "Nivel 1 (Lo)";
@@ -150,9 +158,11 @@ namespace SpellBookWinForms
             gbSeleccion.Controls.Add(lblHechizo);
             gbSeleccion.Controls.Add(cbClase);
             gbSeleccion.Controls.Add(lblClase);
-            gbSeleccion.Location = new System.Drawing.Point(12, 78);
+            gbSeleccion.Location = new Point(17, 130);
+            gbSeleccion.Margin = new Padding(4, 5, 4, 5);
             gbSeleccion.Name = "gbSeleccion";
-            gbSeleccion.Size = new System.Drawing.Size(760, 130);
+            gbSeleccion.Padding = new Padding(4, 5, 4, 5);
+            gbSeleccion.Size = new Size(1086, 217);
             gbSeleccion.TabIndex = 1;
             gbSeleccion.TabStop = false;
             gbSeleccion.Text = "Selección de Hechizo";
@@ -160,30 +170,35 @@ namespace SpellBookWinForms
             // btnMostrar
             // 
             btnMostrar.Anchor = AnchorStyles.Top;
-            btnMostrar.Location = new System.Drawing.Point(340, 95);
+            btnMostrar.BackColor = Color.Yellow;
+            btnMostrar.ForeColor = Color.Blue;
+            btnMostrar.Location = new Point(486, 158);
+            btnMostrar.Margin = new Padding(4, 5, 4, 5);
             btnMostrar.Name = "btnMostrar";
-            btnMostrar.Size = new System.Drawing.Size(100, 27);
+            btnMostrar.Size = new Size(177, 49);
             btnMostrar.TabIndex = 4;
             btnMostrar.Text = "Mostrar hechizo";
-            btnMostrar.UseVisualStyleBackColor = true;
+            btnMostrar.UseVisualStyleBackColor = false;
             btnMostrar.Click += btnMostrar_Click;
             // 
             // cbHechizo
             // 
             cbHechizo.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             cbHechizo.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbHechizo.Location = new System.Drawing.Point(200, 60);
+            cbHechizo.Location = new Point(286, 100);
+            cbHechizo.Margin = new Padding(4, 5, 4, 5);
             cbHechizo.Name = "cbHechizo";
-            cbHechizo.Size = new System.Drawing.Size(360, 23);
+            cbHechizo.Size = new Size(513, 33);
             cbHechizo.TabIndex = 3;
             cbHechizo.SelectedIndexChanged += cbHechizo_SelectedIndexChanged;
             // 
             // lblHechizo
             // 
             lblHechizo.AutoSize = true;
-            lblHechizo.Location = new System.Drawing.Point(80, 63);
+            lblHechizo.Location = new Point(114, 105);
+            lblHechizo.Margin = new Padding(4, 0, 4, 0);
             lblHechizo.Name = "lblHechizo";
-            lblHechizo.Size = new System.Drawing.Size(97, 15);
+            lblHechizo.Size = new Size(163, 25);
             lblHechizo.TabIndex = 2;
             lblHechizo.Text = "Selecciona hechizo:";
             // 
@@ -191,39 +206,42 @@ namespace SpellBookWinForms
             // 
             cbClase.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             cbClase.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbClase.Location = new System.Drawing.Point(200, 28);
+            cbClase.Location = new Point(286, 47);
+            cbClase.Margin = new Padding(4, 5, 4, 5);
             cbClase.Name = "cbClase";
-            cbClase.Size = new System.Drawing.Size(360, 23);
+            cbClase.Size = new Size(513, 33);
             cbClase.TabIndex = 1;
             cbClase.SelectedIndexChanged += cbClase_SelectedIndexChanged;
             // 
             // lblClase
             // 
             lblClase.AutoSize = true;
-            lblClase.Location = new System.Drawing.Point(80, 31);
+            lblClase.Location = new Point(114, 52);
+            lblClase.Margin = new Padding(4, 0, 4, 0);
             lblClase.Name = "lblClase";
-            lblClase.Size = new System.Drawing.Size(90, 15);
+            lblClase.Size = new Size(141, 25);
             lblClase.TabIndex = 0;
             lblClase.Text = "Selecciona clase:";
             // 
             // lblResultado
             // 
             lblResultado.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            lblResultado.Location = new System.Drawing.Point(12, 218);
+            lblResultado.Location = new Point(17, 363);
+            lblResultado.Margin = new Padding(4, 0, 4, 0);
             lblResultado.Name = "lblResultado";
-            lblResultado.Size = new System.Drawing.Size(760, 90);
+            lblResultado.Size = new Size(1086, 150);
             lblResultado.TabIndex = 2;
-            lblResultado.Text = "";
-            lblResultado.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblResultado.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlDetalles
             // 
             pnlDetalles.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             pnlDetalles.AutoSize = true;
             pnlDetalles.FlowDirection = FlowDirection.TopDown;
-            pnlDetalles.Location = new System.Drawing.Point(12, 311);
+            pnlDetalles.Location = new Point(17, 518);
+            pnlDetalles.Margin = new Padding(4, 5, 4, 5);
             pnlDetalles.Name = "pnlDetalles";
-            pnlDetalles.Size = new System.Drawing.Size(760, 10);
+            pnlDetalles.Size = new Size(1086, 17);
             pnlDetalles.TabIndex = 3;
             pnlDetalles.WrapContents = false;
             // 
@@ -231,32 +249,35 @@ namespace SpellBookWinForms
             // 
             pnlSimbolos.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             pnlSimbolos.AutoSize = true;
-            pnlSimbolos.Location = new System.Drawing.Point(12, 360);
+            pnlSimbolos.Location = new Point(17, 600);
+            pnlSimbolos.Margin = new Padding(4, 5, 4, 5);
             pnlSimbolos.Name = "pnlSimbolos";
-            pnlSimbolos.Size = new System.Drawing.Size(760, 10);
+            pnlSimbolos.Size = new Size(1086, 17);
             pnlSimbolos.TabIndex = 4;
             // 
             // picFrasco
             // 
             picFrasco.Anchor = AnchorStyles.Top;
-            picFrasco.Location = new System.Drawing.Point(358, 395);
+            picFrasco.Location = new Point(511, 658);
+            picFrasco.Margin = new Padding(4, 5, 4, 5);
             picFrasco.Name = "picFrasco";
-            picFrasco.Size = new System.Drawing.Size(64, 64);
+            picFrasco.Size = new Size(91, 107);
             picFrasco.SizeMode = PictureBoxSizeMode.Zoom;
             picFrasco.TabIndex = 5;
             picFrasco.TabStop = false;
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(784, 481);
+            ClientSize = new Size(1120, 802);
             Controls.Add(picFrasco);
             Controls.Add(pnlSimbolos);
             Controls.Add(pnlDetalles);
             Controls.Add(lblResultado);
             Controls.Add(gbSeleccion);
             Controls.Add(gbPoder);
+            Margin = new Padding(4, 5, 4, 5);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "📜 Grimorio de Hechizos - Dungeon Master II";

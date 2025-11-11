@@ -26,7 +26,7 @@ Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conju
 
 ## Estructura del proyecto
 
-```
+```magias
 Magias/
   SpellBookWinForms/
     SpellBookWinForms.csproj
@@ -55,9 +55,11 @@ La aplicación detecta primero `img/` dentro de la carpeta del proyecto y, si no
 ## Compilación y ejecución
 
 Con Visual Studio:
+
 - Abrir `SpellBookWinForms.csproj` y ejecutar (F5).
 
 Con CLI:
+
 ```bash
 # En la carpeta del proyecto
 dotnet restore
@@ -91,6 +93,7 @@ MIT. Consulta el archivo `LICENSE` (o confirma la licencia preferida).
 
 ---
 ¿Problemas con imágenes?
+
 - Verifica que `img/` y `img/posiones/` existan y contengan los archivos esperados.
 - Los nombres deben coincidir con los símbolos (se prueban variantes en minúsculas/mayúsculas y `.png`/`.gif`).
 - Ejemplo Cure Poison: `img/posiones/veneno.gif`.
