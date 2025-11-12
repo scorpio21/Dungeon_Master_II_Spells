@@ -43,6 +43,10 @@
   <data name="UI.SelectSpell" xml:space="preserve"><value>Selecciona hechizo:</value></data>
   <data name="UI.ShowSpell" xml:space="preserve"><value>Mostrar hechizo</value></data>
   <data name="UI.Close" xml:space="preserve"><value>Cerrar</value></data>
+  <data name="Menu.Help" xml:space="preserve"><value>Ayuda</value></data>
+  <data name="Menu.About" xml:space="preserve"><value>Acerca de...</value></data>
+  <data name="About.Title" xml:space="preserve"><value>Acerca de</value></data>
+  <data name="About.Message" xml:space="preserve"><value>Grimorio de Hechizos - Dungeon Master II&#x0a;Versión: {0}&#x0a;Autor: scorpio21</value></data>
 
   <!-- MonedasForm -->
   <data name="CF.Title" xml:space="preserve"><value>Calculadora de Monedas - Dungeon Master II</value></data>

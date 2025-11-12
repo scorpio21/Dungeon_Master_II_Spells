@@ -24,6 +24,8 @@ namespace SpellBookWinForms
         private ToolStripMenuItem menuIdioma = null!;
         private ToolStripMenuItem menuEs = null!;
         private ToolStripMenuItem menuEn = null!;
+        private ToolStripMenuItem menuAyuda = null!;
+        private ToolStripMenuItem menuAcerca = null!;
 
         // Soporte de idioma (visualización)
         private enum Idioma { ES, EN }
@@ -656,9 +658,20 @@ namespace SpellBookWinForms
 
             CargarIconosIdioma();
 
+            // Menú de Ayuda > Acerca de
+            menuAyuda = new ToolStripMenuItem("Ayuda");
+            menuAcerca = new ToolStripMenuItem("Acerca de...");
+            menuAcerca.Click += (s, e) =>
+            {
+                var ver = Application.ProductVersion;
+                MessageBox.Show(string.Format(T("About.Message"), ver), T("About.Title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+            };
+            menuAyuda.DropDownItems.Add(menuAcerca);
+
             // Agregar menú principal
             menuPrincipal.Items.Add(menuUtilidades);
             menuPrincipal.Items.Add(menuIdioma);
+            menuPrincipal.Items.Add(menuAyuda);
             
             // Asignar el menú al formulario
             this.MainMenuStrip = menuPrincipal;
@@ -694,6 +707,8 @@ namespace SpellBookWinForms
             menuIdioma.Text = T("Menu.Language");
             menuEs.Text = T("Menu.Spanish");
             menuEn.Text = T("Menu.English");
+            if (menuAyuda != null) menuAyuda.Text = T("Menu.Help");
+            if (menuAcerca != null) menuAcerca.Text = T("Menu.About");
 
             // Controles de selección (group/labels/botón) definidos en Designer: reasignar textos
             gbPoder.Text = T("UI.PowerLevel");

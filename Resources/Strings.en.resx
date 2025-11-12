@@ -43,6 +43,10 @@
   <data name="UI.SelectSpell" xml:space="preserve"><value>Select spell:</value></data>
   <data name="UI.ShowSpell" xml:space="preserve"><value>Show spell</value></data>
   <data name="UI.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Menu.Help" xml:space="preserve"><value>Help</value></data>
+  <data name="Menu.About" xml:space="preserve"><value>About...</value></data>
+  <data name="About.Title" xml:space="preserve"><value>About</value></data>
+  <data name="About.Message" xml:space="preserve"><value>Spellbook - Dungeon Master II&#x0a;Version: {0}&#x0a;Author: scorpio21</value></data>
 
   <!-- MonedasForm -->
   <data name="CF.Title" xml:space="preserve"><value>Currency Calculator - Dungeon Master II</value></data>
