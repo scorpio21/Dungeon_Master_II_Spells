@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="xml:space" use="preserve" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- MainForm menu and UI -->
+  <data name="Menu.Utilities" xml:space="preserve"><value>Utilities</value></data>
+  <data name="Menu.CurrencyCalculator" xml:space="preserve"><value>Currency Calculator</value></data>
+  <data name="Menu.Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Menu.Spanish" xml:space="preserve"><value>Spanish</value></data>
+  <data name="Menu.English" xml:space="preserve"><value>English</value></data>
+  <data name="UI.PowerLevel" xml:space="preserve"><value>Power Level</value></data>
+  <data name="UI.SpellSelection" xml:space="preserve"><value>Spell Selection</value></data>
+  <data name="UI.SelectClass" xml:space="preserve"><value>Select class:</value></data>
+  <data name="UI.SelectSpell" xml:space="preserve"><value>Select spell:</value></data>
+  <data name="UI.ShowSpell" xml:space="preserve"><value>Show spell</value></data>
+
+  <!-- MonedasForm -->
+  <data name="CF.Title" xml:space="preserve"><value>Currency Calculator - Dungeon Master II</value></data>
+  <data name="CF.Header" xml:space="preserve"><value>Currency Calculator</value></data>
+  <data name="CF.CurrencyType" xml:space="preserve"><value>Currency type:</value></data>
+  <data name="CF.Amount" xml:space="preserve"><value>Amount:</value></data>
+  <data name="CF.Calculate" xml:space="preserve"><value>Calculate</value></data>
+  <data name="CF.EqualsTo" xml:space="preserve"><value>equal to:</value></data>
+  <data name="CF.CopperCoins" xml:space="preserve"><value>Copper Coins</value></data>
+  <data name="CF.EqualToOne" xml:space="preserve"><value>equal to:</value></data>
+  <data name="CF.EqualTo" xml:space="preserve"><value>equal to:</value></data>
+</root>

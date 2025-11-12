@@ -4,12 +4,20 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Linq;
+using System.Globalization;
+using System.Resources;
 
 namespace SpellBookWinForms
 {
     public class MonedasForm : Form
     {
         private readonly bool _en; // true = inglés (EN), false = español (ES)
+        private readonly ResourceManager _rm = new ResourceManager("SpellBookWinForms.Resources.Strings", typeof(MonedasForm).Assembly);
+        private string T(string key)
+        {
+            var ci = _en ? new CultureInfo("en") : new CultureInfo("es");
+            return _rm.GetString(key, ci) ?? key;
+        }
         // Valores base en Copper Coins
         private readonly Dictionary<string, (int valor, string imagen)> monedas = new()
         {
@@ -27,7 +35,7 @@ namespace SpellBookWinForms
         public MonedasForm(bool english = false)
         {
             _en = english;
-            this.Text = _en ? "Currency Calculator - Dungeon Master II" : "Calculadora de Monedas - Dungeon Master II";
+            this.Text = T("CF.Title");
             this.StartPosition = FormStartPosition.CenterParent;
             this.Size = new Size(550, 650);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -38,7 +46,7 @@ namespace SpellBookWinForms
             // Configurar controles
             var lblTitulo = new Label
             {
-                Text = _en ? "Currency Calculator" : "Calculadora de Monedas",
+                Text = T("CF.Header"),
                 Font = new Font("Segoe UI", 16, FontStyle.Bold),
                 AutoSize = true,
                 Location = new Point(20, 20)
@@ -49,7 +57,7 @@ namespace SpellBookWinForms
 
             var lblMoneda = new Label
             {
-                Text = _en ? "Currency type:" : "Tipo de moneda:",
+                Text = T("CF.CurrencyType"),
                 Location = new Point(20, 70),
                 AutoSize = true
             };
@@ -95,7 +103,7 @@ namespace SpellBookWinForms
 
             var lblCantidad = new Label
             {
-                Text = _en ? "Amount:" : "Cantidad:",
+                Text = T("CF.Amount"),
                 Location = new Point(20, 130),
                 AutoSize = true
             };
@@ -111,7 +119,7 @@ namespace SpellBookWinForms
 
             var btnCalcular = new Button
             {
-                Text = _en ? "Calculate" : "Calcular",
+                Text = T("CF.Calculate"),
                 Location = new Point(20, 190),
                 Size = new Size(100, 30)
             };
@@ -160,7 +168,7 @@ namespace SpellBookWinForms
 
                 var lblTitulo = new Label
                 {
-                    Text = _en ? $" {cantidad} {monedaSeleccionada} equal to:" : $" {cantidad} {monedaSeleccionada} equivalen a:",
+                    Text = $" {cantidad} {monedaSeleccionada} {T("CF.EqualTo")}",
                     Location = new Point(35, 10),
                     AutoSize = true,
                     Font = new Font("Segoe UI", 10, FontStyle.Bold)
@@ -191,7 +199,7 @@ namespace SpellBookWinForms
 
                 var lblTotal = new Label
                 {
-                    Text = _en ? $"= {totalCobre:N0} Copper Coins" : $"= {totalCobre:N0} Monedas de Cobre",
+                    Text = $"= {totalCobre:N0} {T("CF.CopperCoins")}",
                     Location = new Point(35, 10),
                     AutoSize = true
                 };

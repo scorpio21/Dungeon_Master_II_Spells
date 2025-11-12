@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Globalization;
 using SpellBookWinForms.Properties;
+using System.Resources;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -27,6 +28,14 @@ namespace SpellBookWinForms
         // Soporte de idioma (visualización)
         private enum Idioma { ES, EN }
         private Idioma _idiomaActual = Idioma.ES; // por defecto español
+
+        // Recursos
+        private readonly ResourceManager _rm = new ResourceManager("SpellBookWinForms.Resources.Strings", typeof(MainForm).Assembly);
+        private string T(string key)
+        {
+            var ci = _idiomaActual == Idioma.EN ? new CultureInfo("en") : new CultureInfo("es");
+            return _rm.GetString(key, ci) ?? key;
+        }
 
         // Item para combos: muestra traducido pero mantiene la clave ES para la lógica
         private sealed class ComboItem
@@ -680,18 +689,18 @@ namespace SpellBookWinForms
         private void AplicarIdioma()
         {
             // Textos de menú
-            menuUtilidades.Text = _idiomaActual == Idioma.EN ? "Utilities" : "Utilidades";
-            menuCalculadoraMonedas.Text = _idiomaActual == Idioma.EN ? "Currency Calculator" : "Calculadora de Monedas";
-            menuIdioma.Text = _idiomaActual == Idioma.EN ? "Language" : "Idioma";
-            menuEs.Text = _idiomaActual == Idioma.EN ? "Spanish" : "Español";
-            menuEn.Text = _idiomaActual == Idioma.EN ? "English" : "Inglés";
+            menuUtilidades.Text = T("Menu.Utilities");
+            menuCalculadoraMonedas.Text = T("Menu.CurrencyCalculator");
+            menuIdioma.Text = T("Menu.Language");
+            menuEs.Text = T("Menu.Spanish");
+            menuEn.Text = T("Menu.English");
 
             // Controles de selección (group/labels/botón) definidos en Designer: reasignar textos
-            gbPoder.Text = _idiomaActual == Idioma.EN ? "Power Level" : "Nivel de Poder";
-            gbSeleccion.Text = _idiomaActual == Idioma.EN ? "Spell Selection" : "Selección de Hechizo";
-            lblClase.Text = _idiomaActual == Idioma.EN ? "Select class:" : "Selecciona clase:";
-            lblHechizo.Text = _idiomaActual == Idioma.EN ? "Select spell:" : "Selecciona hechizo:";
-            btnMostrar.Text = _idiomaActual == Idioma.EN ? "Show spell" : "Mostrar hechizo";
+            gbPoder.Text = T("UI.PowerLevel");
+            gbSeleccion.Text = T("UI.SpellSelection");
+            lblClase.Text = T("UI.SelectClass");
+            lblHechizo.Text = T("UI.SelectSpell");
+            btnMostrar.Text = T("UI.ShowSpell");
 
             // Repoblar combos con visualización traducida pero manteniendo claves ES
             var claseSeleccionadaKey = (cbClase.SelectedItem as ComboItem)?.KeyEs;
