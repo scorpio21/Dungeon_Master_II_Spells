@@ -610,6 +610,8 @@ namespace SpellBookWinForms
             // Menú de Ayuda > Acerca de
             menuAyuda = new ToolStripMenuItem("Ayuda");
             menuAcerca = new ToolStripMenuItem("Acerca de...");
+            // Alinear el menú Ayuda a la derecha
+            menuAyuda.Alignment = ToolStripItemAlignment.Right;
             menuAcerca.Click += (s, e) =>
             {
                 var ver = Application.ProductVersion;

@@ -28,6 +28,7 @@ SolidCompression=yes
 WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64compatible
 LanguageDetectionMethod=uilanguage
+SetupIconFile=img\app.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
