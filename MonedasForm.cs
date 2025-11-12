@@ -30,7 +30,7 @@ namespace SpellBookWinForms
         };
         
         private Dictionary<string, Image> imagenesMonedas = new();
-        private string rutaImagenes = Path.Combine(Directory.GetCurrentDirectory(), "img", "objetos", "monedas");
+        private string rutaImagenes = Path.Combine(Imagenes.BaseImgPath(), "objetos", "monedas");
         private ComboBox cmbMoneda = null!;
 
         private sealed class ComboItem
@@ -388,31 +388,11 @@ namespace SpellBookWinForms
         {
             try
             {
-                // Intentar varias rutas posibles
-                var rutasPosibles = new[]
+                // Usar ruta base centralizada
+                rutaImagenes = Path.Combine(Imagenes.BaseImgPath(), "objetos", "monedas");
+                if (!Directory.Exists(rutaImagenes))
                 {
-                    rutaImagenes,
-                    Path.Combine(Directory.GetCurrentDirectory(), "img", "objetos", "monedas"),
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img", "objetos", "monedas"),
-                    Path.Combine("..", "..", "..", "img", "objetos", "monedas"),
-                    Path.Combine(Environment.CurrentDirectory, "img", "objetos", "monedas")
-                };
-
-                bool carpetaEncontrada = false;
-                foreach (var ruta in rutasPosibles)
-                {
-                    if (Directory.Exists(ruta))
-                    {
-                        rutaImagenes = ruta;
-                        carpetaEncontrada = true;
-                        break;
-                    }
-                }
-
-                if (!carpetaEncontrada)
-                {
-                    MessageBox.Show($"No se encontró la carpeta de imágenes. Asegúrate de tener la carpeta 'img/objetos/monedas' en la ruta correcta.\nRutas probadas:\n{string.Join("\n", rutasPosibles)}", 
-                                  "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("No se encontró la carpeta de imágenes de monedas (img/objetos/monedas).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -428,35 +408,27 @@ namespace SpellBookWinForms
                     }
                 }
 
-                // Cargar cada imagen
+                // Cargar cada imagen con lectura segura
                 foreach (var moneda in monedas)
                 {
                     string rutaImagen = Path.Combine(rutaImagenes, moneda.Value.imagen);
-                    if (File.Exists(rutaImagen))
+                    try
                     {
-                        try
+                        var img = Imagenes.CargarImagenSegura(rutaImagen);
+                        if (img != null)
                         {
-                            try
-                            {
-                                using (var tempImg = Image.FromFile(rutaImagen))
-                                {
-                                    // Crear una copia en memoria para evitar bloqueos
-                                    var bmp = new Bitmap(tempImg);
-                                    imagenesMonedas[moneda.Value.imagen] = bmp;
-                                    Console.WriteLine($"Imagen cargada correctamente: {moneda.Value.imagen}");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine($"Error al cargar {rutaImagen}: {ex.Message}");
-                                // Crear una imagen de relleno para evitar errores
-                                imagenesMonedas[moneda.Value.imagen] = CrearImagenDeRelleno(moneda.Value.imagen);
-                            }
+                            imagenesMonedas[moneda.Value.imagen] = img;
+                            Console.WriteLine($"Imagen cargada correctamente: {moneda.Value.imagen}");
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            Console.WriteLine($"Error al cargar la imagen {rutaImagen}: {ex.Message}");
+                            imagenesMonedas[moneda.Value.imagen] = CrearImagenDeRelleno(moneda.Value.imagen);
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al cargar {rutaImagen}: {ex.Message}");
+                        imagenesMonedas[moneda.Value.imagen] = CrearImagenDeRelleno(moneda.Value.imagen);
                     }
                 }
             }
