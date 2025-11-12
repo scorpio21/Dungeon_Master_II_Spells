@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Globalization;
+using SpellBookWinForms.Properties;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -126,51 +128,65 @@ namespace SpellBookWinForms
             InitializeComponent();
             InicializarMenu();
 
-            // Datos: mismos que en Python
-     _hechizos = new()
-{
-    ["Sacerdote"] = new()
-    {
-        ["Poción de Salud"] = ("Vi", "Recupera salud"),
-        ["Poción de Energía"] = ("Ya", "Recupera energía"),
-        ["Poción de Maná"] = ("Zo Bro Ra", "Restaura maná"),
-        ["Poción de Fuerza"] = ("Ful Bro Ku", "Aumenta fuerza"),
-        ["Poción de Destreza"] = ("Oh Bro Ros", "Mejora destreza"),
-        ["Poción de Sabiduría"] = ("Ya Bro Dain", "Mejora sabiduría"),
-        ["Poción de Vitalidad"] = ("Ya Bro Neta", "Mejora vitalidad"),
-        ["Curar Veneno"] = ("Vi Bro", "Elimina veneno"),
-        ["Poción de Escudo"] = ("Ya Bro", "Protección personal"),
-        ["Escudo de Fuego"] = ("Ful Bro Neta", "Escudo de fuego"),
-        ["Escudo Grupal"] = ("Ya Ir", "Protección grupal"),
-        ["Oscuridad"] = ("Des Ir Sar", "Oscurece el entorno"),
-        ["Aura de Fuerza"] = ("Oh Ew Ku", "Aumenta fuerza del grupo"),
-        ["Aura de Destreza"] = ("Oh Ew Ros", "Aumenta destreza del grupo"),
-        ["Aura de Vitalidad"] = ("Oh Ew Neta", "Aumenta vitalidad del grupo"),
-        ["Aura de Sabiduría"] = ("Oh Ew Dain", "Aumenta sabiduría del grupo"),
-        ["Escudo Mágico"] = ("Ya Ir Dain", "Protección mágica"),
-        ["Transportar Esbirro"] = ("Zo Ew Ros", "Transporta esbirro"),
-        ["Reflejo de Hechizos"] = ("Zo Bro Ros", "Refleja hechizos"),
-        ["Guardia Esbirro"] = ("Zo Ew Neta", "Protege esbirro"),
-    },
-    ["Mago"] = new()
-    {
-        ["Antorcha"] = ("Ful", "Crea una antorcha mágica"),
-        ["Luz"] = ("Oh Ir Ra", "Ilumina el entorno"),
-        ["Abrir Puerta"] = ("Zo", "Abre puertas cercanas"),
-        ["Invisibilidad"] = ("Oh Ew Sar", "Vuelve al grupo invisible"),
-        ["Dardo Venenoso"] = ("Des Ven", "Dispara un proyectil venenoso"),
-        ["Nube Venenosa"] = ("Oh Ven", "Genera una nube tóxica"),
-        ["Debilitar Seres Inmateriales"] = ("Des Ew", "Debilita seres no materiales"),
-        ["Bola de Fuego"] = ("Ful Ir", "Explosión de fuego"),
-        ["Rayo"] = ("Oh Kath Ra", "Rayo eléctrico"),
-        ["Marca Mágica"] = ("Ya Ew", "Marca mágica"),
-        ["Empujar"] = ("Oh Kath Ku", "Empuja objetos o enemigos"),
-        ["Atraer"] = ("Oh Kath Ros", "Atrae objetos o enemigos"),
-        ["Aura de Velocidad"] = ("Oh Ir Ros", "Aumenta velocidad del grupo"),
-        ["Esbirro de Ataque"] = ("Zo Ew Ku", "Ataca a un esbirro"),
-    }
-};
+            // Leer idioma desde configuración
+            try
+            {
+                var lang = Settings.Default.Idioma;
+                if (string.IsNullOrWhiteSpace(lang))
+                {
+                    var sys = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+                    lang = string.Equals(sys, "en", StringComparison.OrdinalIgnoreCase) ? "EN" : "ES";
+                    Settings.Default.Idioma = lang;
+                    Settings.Default.Save();
+                }
+                _idiomaActual = string.Equals(lang, "EN", StringComparison.OrdinalIgnoreCase) ? Idioma.EN : Idioma.ES;
+            }
+            catch { /* no-op */ }
 
+            // Datos: mismos que en Python
+            _hechizos = new()
+            {
+                ["Sacerdote"] = new()
+                {
+                    ["Poción de Salud"] = ("Vi", "Recupera salud"),
+                    ["Poción de Energía"] = ("Ya", "Recupera energía"),
+                    ["Poción de Maná"] = ("Zo Bro Ra", "Restaura maná"),
+                    ["Poción de Fuerza"] = ("Ful Bro Ku", "Aumenta fuerza"),
+                    ["Poción de Destreza"] = ("Oh Bro Ros", "Mejora destreza"),
+                    ["Poción de Sabiduría"] = ("Ya Bro Dain", "Mejora sabiduría"),
+                    ["Poción de Vitalidad"] = ("Ya Bro Neta", "Mejora vitalidad"),
+                    ["Curar Veneno"] = ("Vi Bro", "Elimina veneno"),
+                    ["Poción de Escudo"] = ("Ya Bro", "Protección personal"),
+                    ["Escudo de Fuego"] = ("Ful Bro Neta", "Escudo de fuego"),
+                    ["Escudo Grupal"] = ("Ya Ir", "Protección grupal"),
+                    ["Oscuridad"] = ("Des Ir Sar", "Oscurece el entorno"),
+                    ["Aura de Fuerza"] = ("Oh Ew Ku", "Aumenta fuerza del grupo"),
+                    ["Aura de Destreza"] = ("Oh Ew Ros", "Aumenta destreza del grupo"),
+                    ["Aura de Vitalidad"] = ("Oh Ew Neta", "Aumenta vitalidad del grupo"),
+                    ["Aura de Sabiduría"] = ("Oh Ew Dain", "Aumenta sabiduría del grupo"),
+                    ["Escudo Mágico"] = ("Ya Ir Dain", "Protección mágica"),
+                    ["Transportar Esbirro"] = ("Zo Ew Ros", "Transporta esbirro"),
+                    ["Reflejo de Hechizos"] = ("Zo Bro Ros", "Refleja hechizos"),
+                    ["Guardia Esbirro"] = ("Zo Ew Neta", "Protege esbirro"),
+                },
+                ["Mago"] = new()
+                {
+                    ["Antorcha"] = ("Ful", "Crea una antorcha mágica"),
+                    ["Luz"] = ("Oh Ir Ra", "Ilumina el entorno"),
+                    ["Abrir Puerta"] = ("Zo", "Abre puertas cercanas"),
+                    ["Invisibilidad"] = ("Oh Ew Sar", "Vuelve al grupo invisible"),
+                    ["Dardo Venenoso"] = ("Des Ven", "Dispara un proyectil venenoso"),
+                    ["Nube Venenosa"] = ("Oh Ven", "Genera una nube tóxica"),
+                    ["Debilitar Seres Inmateriales"] = ("Des Ew", "Debilita seres no materiales"),
+                    ["Bola de Fuego"] = ("Ful Ir", "Explosión de fuego"),
+                    ["Rayo"] = ("Oh Kath Ra", "Rayo eléctrico"),
+                    ["Marca Mágica"] = ("Ya Ew", "Marca mágica"),
+                    ["Empujar"] = ("Oh Kath Ku", "Empuja objetos o enemigos"),
+                    ["Atraer"] = ("Oh Kath Ros", "Atrae objetos o enemigos"),
+                    ["Aura de Velocidad"] = ("Oh Ir Ros", "Aumenta velocidad del grupo"),
+                    ["Esbirro de Ataque"] = ("Zo Ew Ku", "Ataca a un esbirro"),
+                }
+            };
 
             _valoresPL1 = new()
             {
@@ -239,6 +255,25 @@ namespace SpellBookWinForms
             picFrasco.Dock = DockStyle.Top;
             Padding = new Padding(8);
             // Ajustes iniciales de layout completados
+
+            // Idioma: leer preferencia guardada o inferir por cultura
+            try
+            {
+                var lang = Settings.Default.Idioma;
+                if (string.IsNullOrWhiteSpace(lang))
+                {
+                    var sys = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+                    lang = string.Equals(sys, "en", StringComparison.OrdinalIgnoreCase) ? "EN" : "ES";
+                    Settings.Default.Idioma = lang;
+                    Settings.Default.Save();
+                }
+                _idiomaActual = string.Equals(lang, "EN", StringComparison.OrdinalIgnoreCase) ? Idioma.EN : Idioma.ES;
+                // Marcar menú y aplicar
+                menuEs.Checked = _idiomaActual == Idioma.ES;
+                menuEn.Checked = _idiomaActual == Idioma.EN;
+                AplicarIdioma();
+            }
+            catch { /* no-op */ }
         }
 
         private void cbClase_SelectedIndexChanged(object? sender, EventArgs e)
@@ -605,10 +640,12 @@ namespace SpellBookWinForms
             menuEs = new ToolStripMenuItem("Español");
             menuEn = new ToolStripMenuItem("English");
             menuEs.Checked = true;
-            menuEs.Click += (s, e) => { _idiomaActual = Idioma.ES; menuEs.Checked = true; menuEn.Checked = false; AplicarIdioma(); };
-            menuEn.Click += (s, e) => { _idiomaActual = Idioma.EN; menuEn.Checked = true; menuEs.Checked = false; AplicarIdioma(); };
+            menuEs.Click += (s, e) => { _idiomaActual = Idioma.ES; menuEs.Checked = true; menuEn.Checked = false; AplicarIdioma(); Settings.Default.Idioma = "ES"; Settings.Default.Save(); };
+            menuEn.Click += (s, e) => { _idiomaActual = Idioma.EN; menuEn.Checked = true; menuEs.Checked = false; AplicarIdioma(); Settings.Default.Idioma = "EN"; Settings.Default.Save(); };
             menuIdioma.DropDownItems.Add(menuEs);
             menuIdioma.DropDownItems.Add(menuEn);
+
+            CargarIconosIdioma();
 
             // Agregar menú principal
             menuPrincipal.Items.Add(menuUtilidades);
@@ -617,6 +654,27 @@ namespace SpellBookWinForms
             // Asignar el menú al formulario
             this.MainMenuStrip = menuPrincipal;
             this.Controls.Add(menuPrincipal);
+        }
+
+        private void CargarIconosIdioma()
+        {
+            try
+            {
+                var dir = Path.Combine(BaseImgPath(), "idiomas");
+                var esPng = Path.Combine(dir, "es.png");
+                var gbPng = Path.Combine(dir, "gb.png");
+                Image? LoadSmall(string path)
+                {
+                    if (!File.Exists(path)) return null;
+                    using var img = Image.FromFile(path);
+                    return new Bitmap(img, new Size(18, 12));
+                }
+                var imgEs = LoadSmall(esPng);
+                var imgGb = LoadSmall(gbPng);
+                if (imgEs != null) menuEs.Image = imgEs;
+                if (imgGb != null) menuEn.Image = imgGb;
+            }
+            catch { }
         }
 
         private void AplicarIdioma()
