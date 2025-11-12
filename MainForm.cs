@@ -441,24 +441,21 @@ namespace SpellBookWinForms
             imgBoxHost.Controls.Add(pb);
 
             // Intentar distintas extensiones y capitalizaciones
-            var baseDir = BaseImgPath();
+            var baseDir = Imagenes.BaseImgPath();
             string lower = simbolo.ToLowerInvariant();
             string upper = simbolo.ToUpperInvariant();
-            string[] posibles = new[]
+            var candidatos = new[]
             {
-                Path.Combine(baseDir, $"{simbolo}.png"),
-                Path.Combine(baseDir, $"{simbolo}.PNG"),
-                Path.Combine(baseDir, $"{simbolo}.gif"),
-                Path.Combine(baseDir, $"{simbolo}.GIF"),
-                Path.Combine(baseDir, $"{lower}.png"),
-                Path.Combine(baseDir, $"{lower}.gif"),
-                Path.Combine(baseDir, $"{upper}.png"),
-                Path.Combine(baseDir, $"{upper}.gif"),
+                $"{simbolo}.png", $"{simbolo}.gif", $"{simbolo}.PNG", $"{simbolo}.GIF",
+                $"{lower}.png", $"{lower}.gif", $"{upper}.png", $"{upper}.gif"
             };
-            string? encontrado = posibles.FirstOrDefault(File.Exists);
+            string? encontrado = candidatos
+                .Select(f => Path.Combine(baseDir, f))
+                .FirstOrDefault(File.Exists);
             if (encontrado != null)
             {
-                pb.Image = Image.FromFile(encontrado);
+                var img = Imagenes.CargarImagenSegura(encontrado);
+                Imagenes.ReemplazarImagen(pb, img);
             }
             else
             {
@@ -489,37 +486,7 @@ namespace SpellBookWinForms
             return $"{simbolo}: {descEs} • {fam}";
         }
 
-        private string BaseImgPath()
-        {
-            // 1) Priorizar la carpeta img del proyecto: L:\Magias\SpellBookWinForms\img
-            var exeDir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory); // ...\bin\Debug\net8.0-windows
-            var projectDir = exeDir.Parent?.Parent?.Parent; // ...\SpellBookWinForms
-            if (projectDir != null)
-            {
-                var projectImg = Path.Combine(projectDir.FullName, "img");
-                if (Directory.Exists(projectImg)) return projectImg;
-            }
-
-            // 2) Si no existe, buscar una carpeta 'img' ascendiendo
-            var dir = exeDir;
-            for (int i = 0; i < 8 && dir != null; i++)
-            {
-                var intento = Path.Combine(dir.FullName, "img");
-                if (Directory.Exists(intento)) return intento;
-
-                var intentoMagias = Path.Combine(dir.FullName, "Magias", "img");
-                if (Directory.Exists(intentoMagias)) return intentoMagias;
-
-                dir = dir.Parent;
-            }
-
-            // 3) Fallback conocido
-            var alt = @"L:\\Magias\\img";
-            if (Directory.Exists(alt)) return alt;
-
-            // 4) Último recurso
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img");
-        }
+        
 
         private bool EsPocion(string hechizo)
         {
@@ -533,37 +500,19 @@ namespace SpellBookWinForms
         {
             // Determinar el directorio base según si es un objeto o una poción
             var subcarpeta = esObjeto ? "objetos" : "posiones";
-            var baseDir = Path.Combine(BaseImgPath(), subcarpeta);
-            
-            // Si el nombre ya incluye una extensión, intentar ese archivo exacto primero
-            var extNombre = Path.GetExtension(nombreArchivo);
-            if (!string.IsNullOrEmpty(extNombre))
+            var baseDir = Path.Combine(Imagenes.BaseImgPath(), subcarpeta);
+
+            string[] extensiones = new[] { ".png", ".gif", ".bmp", ".jpg", ".jpeg" };
+            var ruta = Imagenes.BuscarImagen(baseDir, nombreArchivo, extensiones);
+            if (ruta != null)
             {
-                var rutaExacta = Path.Combine(baseDir, nombreArchivo);
-                if (File.Exists(rutaExacta))
-                {
-                    if (picFrasco.Image != null) { var old = picFrasco.Image; picFrasco.Image = null; old.Dispose(); }
-                    picFrasco.Image = Image.FromFile(rutaExacta);
-                    return;
-                }
+                var img = Imagenes.CargarImagenSegura(ruta);
+                Imagenes.ReemplazarImagen(picFrasco, img);
+                return;
             }
 
-            // Buscar la imagen con diferentes extensiones
-            string[] extensiones = { "", ".png", ".gif", ".bmp", ".jpg", ".jpeg" };
-            
-            foreach (var ext in extensiones)
-            {
-                string rutaCompleta = Path.Combine(baseDir, $"{nombreArchivo}{ext}");
-                if (File.Exists(rutaCompleta))
-                {
-                    if (picFrasco.Image != null) { var old = picFrasco.Image; picFrasco.Image = null; old.Dispose(); }
-                    picFrasco.Image = Image.FromFile(rutaCompleta);
-                    return;
-                }
-            }
-            
             // Si no se encuentra la imagen, limpiar
-            picFrasco.Image = null;
+            Imagenes.ReemplazarImagen(picFrasco, null);
         }
 
         private (string archivo, bool esObjeto) MapearImagenFrasco(string hechizo)
@@ -682,7 +631,7 @@ namespace SpellBookWinForms
         {
             try
             {
-                var dir = Path.Combine(BaseImgPath(), "idiomas");
+                var dir = Path.Combine(Imagenes.BaseImgPath(), "idiomas");
                 var esPng = Path.Combine(dir, "es.png");
                 var gbPng = Path.Combine(dir, "gb.png");
                 Image? LoadSmall(string path)
