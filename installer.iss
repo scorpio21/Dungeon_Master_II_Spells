@@ -22,13 +22,15 @@ DefaultGroupName={#MyAppName}
 DisableDirPage=no
 DisableProgramGroupPage=no
 OutputBaseFilename=Grimorio_de_Hechizos_v{#MyAppVersion}_Setup
-OutputDir=.\\publish
+OutputDir=.\publish
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64compatible
+LanguageDetectionMethod=uilanguage
 
 [Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 
 [Tasks]
