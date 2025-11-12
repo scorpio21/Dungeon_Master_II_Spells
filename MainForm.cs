@@ -334,7 +334,12 @@ namespace SpellBookWinForms
 
             int mana = nivel; // poder
             int diff = nivel;
-            detalles.Add($"{partes[0]}: Mana {nivel}, Dificultad {nivel} — Familia: {_simboloFamilia.GetValueOrDefault(partes[0], "Power")}");
+            string manaWord = _idiomaActual == Idioma.EN ? "Mana" : "Mana";
+            string diffWord = _idiomaActual == Idioma.EN ? "Difficulty" : "Dificultad";
+            string familyWord = _idiomaActual == Idioma.EN ? "Family" : "Familia";
+            string unknownFamily = _idiomaActual == Idioma.EN ? "Unknown" : "Desconocido";
+
+            detalles.Add($"{partes[0]}: {manaWord} {nivel}, {diffWord} {nivel} — {familyWord}: {_simboloFamilia.GetValueOrDefault(partes[0], "Power")}");
 
             double factor = (nivel + 1) / 2.0;
             foreach (var s in partes.Skip(1))
@@ -346,7 +351,7 @@ namespace SpellBookWinForms
                 int m = (int)Math.Floor(baseMana * factor);
                 int d = (int)Math.Floor(baseDiff * factor);
                 mana += m; diff += d;
-                detalles.Add($"{s}: Mana {m}, Dificultad {d} — Familia: {_simboloFamilia.GetValueOrDefault(s, "Desconocido")}");
+                detalles.Add($"{s}: {manaWord} {m}, {diffWord} {d} — {familyWord}: {_simboloFamilia.GetValueOrDefault(s, unknownFamily)}");
             }
             return (mana, diff, detalles);
         }
@@ -428,7 +433,7 @@ namespace SpellBookWinForms
         private string TooltipDe(string simbolo)
         {
             var descEs = _simboloDescripcion.GetValueOrDefault(simbolo, "Símbolo desconocido");
-            var fam = _simboloFamilia.GetValueOrDefault(simbolo, "Familia desconocida");
+            var fam = _simboloFamilia.GetValueOrDefault(simbolo, _idiomaActual == Idioma.EN ? "Unknown family" : "Familia desconocida");
             if (_idiomaActual == Idioma.EN)
             {
                 // Traducciones simples para tooltip (familias ya están en EN)

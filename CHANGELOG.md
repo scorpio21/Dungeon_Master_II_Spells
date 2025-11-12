@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.5] - 2025-11-12
+
+### Añadido
+
+- Soporte multilenguaje en la aplicación (Español/Inglés) con selector en el menú.
+
+### Mejorado
+
+- Traducciones para clases, hechizos, efectos, etiquetas y tooltips.
+- Ajuste de detalles en EN (Mana/Difficulty/Family) y tooltips.
+
+### Corregido
+
+- Warnings del instalador (Inno Setup): uso de `x64compatible` y `commonpf64`.
+
 ## [1.0.4] - 2025-11-11
 
 ### Añadido
