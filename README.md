@@ -1,4 +1,4 @@
-# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.4
+# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.5
 
 ## Capturas
 
@@ -13,6 +13,8 @@ Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conju
 - Imágenes: carga desde disco (no embebidas)
 
 > Fuente de datos: “Dungeon Master II Spells - Dungeon Master II Solutions - Dungeon Master II - Games - Dungeon Master Encyclopaedia”.
+
+> Novedad v1.0.5: interfaz multilenguaje (Español/Inglés) con selector en la aplicación.
 
 ## Características
 
