@@ -42,6 +42,7 @@
   <data name="UI.SelectClass" xml:space="preserve"><value>Selecciona clase:</value></data>
   <data name="UI.SelectSpell" xml:space="preserve"><value>Selecciona hechizo:</value></data>
   <data name="UI.ShowSpell" xml:space="preserve"><value>Mostrar hechizo</value></data>
+  <data name="UI.Close" xml:space="preserve"><value>Cerrar</value></data>
 
   <!-- MonedasForm -->
   <data name="CF.Title" xml:space="preserve"><value>Calculadora de Monedas - Dungeon Master II</value></data>

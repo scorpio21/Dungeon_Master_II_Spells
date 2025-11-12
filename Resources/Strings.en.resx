@@ -42,6 +42,7 @@
   <data name="UI.SelectClass" xml:space="preserve"><value>Select class:</value></data>
   <data name="UI.SelectSpell" xml:space="preserve"><value>Select spell:</value></data>
   <data name="UI.ShowSpell" xml:space="preserve"><value>Show spell</value></data>
+  <data name="UI.Close" xml:space="preserve"><value>Close</value></data>
 
   <!-- MonedasForm -->
   <data name="CF.Title" xml:space="preserve"><value>Currency Calculator - Dungeon Master II</value></data>

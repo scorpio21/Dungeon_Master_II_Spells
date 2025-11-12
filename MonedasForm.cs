@@ -149,6 +149,16 @@ namespace SpellBookWinForms
                 Size = new Size(100, 30)
             };
 
+            // Botón Cerrar junto al botón Calcular
+            var btnCerrarTop = new Button
+            {
+                Text = T("UI.Close"),
+                Size = new Size(100, 30)
+            };
+            btnCerrarTop.Location = new Point(btnCalcular.Left + btnCalcular.Width + 10, btnCalcular.Top);
+            btnCerrarTop.Click += (s, e) => this.Close();
+            this.CancelButton = btnCerrarTop; // permite cerrar con Esc
+
             var pnlResultados = new Panel
             {
                 Location = new Point(20, 230),
@@ -157,10 +167,13 @@ namespace SpellBookWinForms
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle
             };
+            pnlResultados.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
 
             btnCalcular.Click += (s, e) =>
             {
-                var monedaSeleccionada = (cmbMoneda.SelectedItem as ComboItem)?.KeyEs;
+                var itemSel = cmbMoneda.SelectedItem as ComboItem;
+                var monedaSeleccionada = itemSel?.KeyEs;
+                var displaySeleccionada = itemSel?.Display ?? monedaSeleccionada;
                 if (monedaSeleccionada == null) return;
 
                 var cantidad = (int)numCantidad.Value;
@@ -193,7 +206,7 @@ namespace SpellBookWinForms
 
                 var lblTitulo = new Label
                 {
-                    Text = $" {cantidad} {monedaSeleccionada} {T("CF.EqualTo")}",
+                    Text = $" {cantidad} {displaySeleccionada} {T("CF.EqualTo")}",
                     Location = new Point(35, 10),
                     AutoSize = true,
                     Font = new Font("Segoe UI", 10, FontStyle.Bold)
@@ -356,7 +369,7 @@ namespace SpellBookWinForms
             // Agregar controles al formulario
             this.Controls.AddRange(new Control[] {
                 lblTitulo, lblMoneda, cmbMoneda, lblCantidad,
-                numCantidad, btnCalcular, pnlResultados
+                numCantidad, btnCalcular, btnCerrarTop, pnlResultados
             });
 
             // Calcular automáticamente al cambiar valores
@@ -368,6 +381,7 @@ namespace SpellBookWinForms
             
             // Calcular al cargar el formulario
             btnCalcular.PerformClick();
+            // (El botón Cerrar ahora está junto a Calcular en la parte superior)
         }
         
         private void CargarImagenesMonedas()
