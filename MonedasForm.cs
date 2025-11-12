@@ -9,6 +9,7 @@ namespace SpellBookWinForms
 {
     public class MonedasForm : Form
     {
+        private readonly bool _en; // true = inglés (EN), false = español (ES)
         // Valores base en Copper Coins
         private readonly Dictionary<string, (int valor, string imagen)> monedas = new()
         {
@@ -23,9 +24,10 @@ namespace SpellBookWinForms
         private Dictionary<string, Image> imagenesMonedas = new();
         private string rutaImagenes = Path.Combine(Directory.GetCurrentDirectory(), "img", "objetos", "monedas");
 
-        public MonedasForm()
+        public MonedasForm(bool english = false)
         {
-            this.Text = "Calculadora de Monedas - Dungeon Master II";
+            _en = english;
+            this.Text = _en ? "Currency Calculator - Dungeon Master II" : "Calculadora de Monedas - Dungeon Master II";
             this.StartPosition = FormStartPosition.CenterParent;
             this.Size = new Size(550, 650);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -36,7 +38,7 @@ namespace SpellBookWinForms
             // Configurar controles
             var lblTitulo = new Label
             {
-                Text = "Calculadora de Monedas",
+                Text = _en ? "Currency Calculator" : "Calculadora de Monedas",
                 Font = new Font("Segoe UI", 16, FontStyle.Bold),
                 AutoSize = true,
                 Location = new Point(20, 20)
@@ -47,7 +49,7 @@ namespace SpellBookWinForms
 
             var lblMoneda = new Label
             {
-                Text = "Tipo de moneda:",
+                Text = _en ? "Currency type:" : "Tipo de moneda:",
                 Location = new Point(20, 70),
                 AutoSize = true
             };
@@ -93,7 +95,7 @@ namespace SpellBookWinForms
 
             var lblCantidad = new Label
             {
-                Text = "Cantidad:",
+                Text = _en ? "Amount:" : "Cantidad:",
                 Location = new Point(20, 130),
                 AutoSize = true
             };
@@ -109,7 +111,7 @@ namespace SpellBookWinForms
 
             var btnCalcular = new Button
             {
-                Text = "Calcular",
+                Text = _en ? "Calculate" : "Calcular",
                 Location = new Point(20, 190),
                 Size = new Size(100, 30)
             };
@@ -158,7 +160,7 @@ namespace SpellBookWinForms
 
                 var lblTitulo = new Label
                 {
-                    Text = $" {cantidad} {monedaSeleccionada} equivalen a:",
+                    Text = _en ? $" {cantidad} {monedaSeleccionada} equal to:" : $" {cantidad} {monedaSeleccionada} equivalen a:",
                     Location = new Point(35, 10),
                     AutoSize = true,
                     Font = new Font("Segoe UI", 10, FontStyle.Bold)
@@ -189,7 +191,7 @@ namespace SpellBookWinForms
 
                 var lblTotal = new Label
                 {
-                    Text = $"= {totalCobre:N0} Monedas de Cobre",
+                    Text = _en ? $"= {totalCobre:N0} Copper Coins" : $"= {totalCobre:N0} Monedas de Cobre",
                     Location = new Point(35, 10),
                     AutoSize = true
                 };

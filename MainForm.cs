@@ -18,6 +18,108 @@ namespace SpellBookWinForms
         private MenuStrip menuPrincipal = null!;  // Inicialización no nula asegurada en el constructor
         private ToolStripMenuItem menuUtilidades = null!;
         private ToolStripMenuItem menuCalculadoraMonedas = null!;
+        private ToolStripMenuItem menuIdioma = null!;
+        private ToolStripMenuItem menuEs = null!;
+        private ToolStripMenuItem menuEn = null!;
+
+        // Soporte de idioma (visualización)
+        private enum Idioma { ES, EN }
+        private Idioma _idiomaActual = Idioma.ES; // por defecto español
+
+        // Item para combos: muestra traducido pero mantiene la clave ES para la lógica
+        private sealed class ComboItem
+        {
+            public string KeyEs { get; }
+            public string Display { get; }
+            public ComboItem(string keyEs, string display) { KeyEs = keyEs; Display = display; }
+            public override string ToString() => Display;
+        }
+
+        // Traducciones de clases y hechizos (ES -> EN)
+        private readonly Dictionary<string, string> _trClases = new()
+        {
+            ["Sacerdote"] = "Priest",
+            ["Mago"] = "Wizard",
+        };
+
+        private readonly Dictionary<string, string> _trHechizosNombre = new()
+        {
+            // Sacerdote
+            ["Poción de Salud"] = "Health Potion",
+            ["Poción de Energía"] = "Stamina Potion",
+            ["Poción de Maná"] = "Mana Potion",
+            ["Poción de Fuerza"] = "Strength Potion",
+            ["Poción de Destreza"] = "Dexterity Potion",
+            ["Poción de Sabiduría"] = "Wisdom Potion",
+            ["Poción de Vitalidad"] = "Vitality Potion",
+            ["Curar Veneno"] = "Cure Poison",
+            ["Poción de Escudo"] = "Shield Potion",
+            ["Escudo de Fuego"] = "Fire Shield",
+            ["Escudo Grupal"] = "Party Shield",
+            ["Oscuridad"] = "Darkness",
+            ["Aura de Fuerza"] = "Aura of Strength",
+            ["Aura de Destreza"] = "Aura of Dexterity",
+            ["Aura de Vitalidad"] = "Aura of Vitality",
+            ["Aura de Sabiduría"] = "Aura of Wisdom",
+            ["Escudo Mágico"] = "Magic Shield",
+            ["Transportar Esbirro"] = "Minion Transport",
+            ["Reflejo de Hechizos"] = "Spell Reflection",
+            ["Guardia Esbirro"] = "Minion Guard",
+
+            // Mago
+            ["Antorcha"] = "Torch",
+            ["Luz"] = "Light",
+            ["Abrir Puerta"] = "Open Door",
+            ["Invisibilidad"] = "Invisibility",
+            ["Dardo Venenoso"] = "Poison Dart",
+            ["Nube Venenosa"] = "Poison Cloud",
+            ["Debilitar Seres Inmateriales"] = "Weaken Non-Material Beings",
+            ["Bola de Fuego"] = "Fireball",
+            ["Rayo"] = "Lightning Bolt",
+            ["Marca Mágica"] = "Magic Mark",
+            ["Empujar"] = "Push",
+            ["Atraer"] = "Pull",
+            ["Aura de Velocidad"] = "Aura of Speed",
+            ["Esbirro de Ataque"] = "Attack Minion",
+        };
+
+        private readonly Dictionary<string, string> _trEfecto = new()
+        {
+            ["Recupera salud"] = "Restores health",
+            ["Recupera energía"] = "Restores stamina",
+            ["Restaura maná"] = "Restores mana",
+            ["Aumenta fuerza"] = "Increases strength",
+            ["Mejora destreza"] = "Improves dexterity",
+            ["Mejora sabiduría"] = "Improves wisdom",
+            ["Mejora vitalidad"] = "Improves vitality",
+            ["Elimina veneno"] = "Cures poison",
+            ["Protección personal"] = "Personal protection",
+            ["Escudo de fuego"] = "Fire protection",
+            ["Protección grupal"] = "Party protection",
+            ["Oscurece el entorno"] = "Darkens the surroundings",
+            ["Aumenta fuerza del grupo"] = "Increases party strength",
+            ["Aumenta destreza del grupo"] = "Increases party dexterity",
+            ["Aumenta vitalidad del grupo"] = "Increases party vitality",
+            ["Aumenta sabiduría del grupo"] = "Increases party wisdom",
+            ["Protección mágica"] = "Magic protection",
+            ["Transporta esbirro"] = "Transports minion",
+            ["Refleja hechizos"] = "Reflects spells",
+            ["Protege esbirro"] = "Guards minion",
+            ["Crea una antorcha mágica"] = "Creates a magical torch",
+            ["Ilumina el entorno"] = "Illuminates the surroundings",
+            ["Abre puertas cercanas"] = "Opens nearby doors",
+            ["Vuelve al grupo invisible"] = "Turns the party invisible",
+            ["Dispara un proyectil venenoso"] = "Shoots a poisonous projectile",
+            ["Genera una nube tóxica"] = "Generates a toxic cloud",
+            ["Debilita seres no materiales"] = "Weakens non-material beings",
+            ["Explosión de fuego"] = "Fire explosion",
+            ["Rayo eléctrico"] = "Electric lightning",
+            ["Marca mágica"] = "Magical mark",
+            ["Empuja objetos o enemigos"] = "Pushes objects or enemies",
+            ["Atrae objetos o enemigos"] = "Pulls objects or enemies",
+            ["Aumenta velocidad del grupo"] = "Increases party speed",
+            ["Ataca a un esbirro"] = "Attacks a minion",
+        };
 
         public MainForm()
         {
@@ -112,7 +214,13 @@ namespace SpellBookWinForms
             };
 
             // Inicializar combos
-            cbClase.Items.AddRange(_hechizos.Keys.Cast<object>().ToArray());
+            // Poblar clases con items que conservan clave ES pero muestran según idioma
+            cbClase.Items.Clear();
+            foreach (var claseEs in _hechizos.Keys)
+            {
+                var display = _idiomaActual == Idioma.EN && _trClases.TryGetValue(claseEs, out var en) ? en : claseEs;
+                cbClase.Items.Add(new ComboItem(claseEs, display));
+            }
             if (cbClase.Items.Count > 0) cbClase.SelectedIndex = 0;
 
             // Ajustes de layout para evitar solapamiento
@@ -135,10 +243,14 @@ namespace SpellBookWinForms
 
         private void cbClase_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            if (cbClase.SelectedItem is not string clase) return;
+            if (cbClase.SelectedItem is not ComboItem claseItem) return;
+            var clase = claseItem.KeyEs; // usamos la clave ES para lógica
             cbHechizo.Items.Clear();
-            foreach (var h in _hechizos[clase].Keys)
-                cbHechizo.Items.Add(h);
+            foreach (var hEs in _hechizos[clase].Keys)
+            {
+                var display = _idiomaActual == Idioma.EN && _trHechizosNombre.TryGetValue(hEs, out var en) ? en : hEs;
+                cbHechizo.Items.Add(new ComboItem(hEs, display));
+            }
             if (cbHechizo.Items.Count > 0) cbHechizo.SelectedIndex = 0;
             LimpiarResultados();
         }
@@ -152,7 +264,7 @@ namespace SpellBookWinForms
             picFrasco.Image = null;
             
             // Si es una poción, cargar el frasco vacío
-            if (cbHechizo.SelectedItem is string hechizo && EsPocion(hechizo))
+            if (cbHechizo.SelectedItem is ComboItem itemSel && EsPocion(itemSel.KeyEs))
             {
                 CargarImagenFrasco("vacia.png", esObjeto: false);
             }
@@ -160,13 +272,20 @@ namespace SpellBookWinForms
 
         private void btnMostrar_Click(object? sender, EventArgs e)
         {
-            if (cbClase.SelectedItem is not string clase || cbHechizo.SelectedItem is not string hechizo) return;
+            if (cbClase.SelectedItem is not ComboItem claseItem2 || cbHechizo.SelectedItem is not ComboItem hechizoItem) return;
+            var clase = claseItem2.KeyEs;
+            var hechizo = hechizoItem.KeyEs; // clave ES para lógica e imágenes
             var datos = _hechizos[clase][hechizo];
             var poder = ObtenerPoderSeleccionado();
             var simbolos = $"{poder} {datos.Simbolos}";
 
             var (mana, diff, detalles) = Calcular(simbolos);
-            lblResultado.Text = $"🔮 Hechizo: {hechizo}\n✨ Efecto: {datos.Efecto}\n🧪 Símbolos: {simbolos}\n🔋 Mana total: {mana}\n🎯 Dificultad total: {diff}";
+            var nombreMostrado = _idiomaActual == Idioma.EN && _trHechizosNombre.TryGetValue(hechizo, out var hEn) ? hEn : hechizo;
+            var efectoMostrado = _idiomaActual == Idioma.EN && _trEfecto.TryGetValue(datos.Efecto, out var eEn) ? eEn : datos.Efecto;
+            if (_idiomaActual == Idioma.EN)
+                lblResultado.Text = $"🔮 Spell: {nombreMostrado}\n✨ Effect: {efectoMostrado}\n🧪 Symbols: {simbolos}\n🔋 Total mana: {mana}\n🎯 Total difficulty: {diff}";
+            else
+                lblResultado.Text = $"🔮 Hechizo: {nombreMostrado}\n✨ Efecto: {efectoMostrado}\n🧪 Símbolos: {simbolos}\n🔋 Mana total: {mana}\n🎯 Dificultad total: {diff}";
 
             // Detalles
             pnlDetalles.Controls.Clear();
@@ -308,9 +427,15 @@ namespace SpellBookWinForms
 
         private string TooltipDe(string simbolo)
         {
-            var desc = _simboloDescripcion.GetValueOrDefault(simbolo, "Símbolo desconocido");
+            var descEs = _simboloDescripcion.GetValueOrDefault(simbolo, "Símbolo desconocido");
             var fam = _simboloFamilia.GetValueOrDefault(simbolo, "Familia desconocida");
-            return $"{simbolo}: {desc} • {fam}";
+            if (_idiomaActual == Idioma.EN)
+            {
+                // Traducciones simples para tooltip (familias ya están en EN)
+                var descEn = _trEfecto.TryGetValue(descEs, out var d) ? d : descEs;
+                return $"{simbolo}: {descEn} • {fam}";
+            }
+            return $"{simbolo}: {descEs} • {fam}";
         }
 
         private string BaseImgPath()
@@ -463,19 +588,69 @@ namespace SpellBookWinForms
             menuCalculadoraMonedas = new ToolStripMenuItem("Calculadora de Monedas");
             menuCalculadoraMonedas.Click += (s, e) =>
             {
-                var monedasForm = new MonedasForm();
+                var monedasForm = new MonedasForm(_idiomaActual == Idioma.EN);
                 monedasForm.ShowDialog();
             };
             
             // Agregar opciones al menú
             menuUtilidades.DropDownItems.Add(menuCalculadoraMonedas);
             
+            // Menú de Idioma
+            menuIdioma = new ToolStripMenuItem("Idioma");
+            menuEs = new ToolStripMenuItem("Español");
+            menuEn = new ToolStripMenuItem("English");
+            menuEs.Checked = true;
+            menuEs.Click += (s, e) => { _idiomaActual = Idioma.ES; menuEs.Checked = true; menuEn.Checked = false; AplicarIdioma(); };
+            menuEn.Click += (s, e) => { _idiomaActual = Idioma.EN; menuEn.Checked = true; menuEs.Checked = false; AplicarIdioma(); };
+            menuIdioma.DropDownItems.Add(menuEs);
+            menuIdioma.DropDownItems.Add(menuEn);
+
             // Agregar menú principal
             menuPrincipal.Items.Add(menuUtilidades);
+            menuPrincipal.Items.Add(menuIdioma);
             
             // Asignar el menú al formulario
             this.MainMenuStrip = menuPrincipal;
             this.Controls.Add(menuPrincipal);
+        }
+
+        private void AplicarIdioma()
+        {
+            // Textos de menú
+            menuUtilidades.Text = _idiomaActual == Idioma.EN ? "Utilities" : "Utilidades";
+            menuCalculadoraMonedas.Text = _idiomaActual == Idioma.EN ? "Currency Calculator" : "Calculadora de Monedas";
+            menuIdioma.Text = _idiomaActual == Idioma.EN ? "Language" : "Idioma";
+            menuEs.Text = _idiomaActual == Idioma.EN ? "Spanish" : "Español";
+            menuEn.Text = _idiomaActual == Idioma.EN ? "English" : "Inglés";
+
+            // Controles de selección (group/labels/botón) definidos en Designer: reasignar textos
+            gbPoder.Text = _idiomaActual == Idioma.EN ? "Power Level" : "Nivel de Poder";
+            gbSeleccion.Text = _idiomaActual == Idioma.EN ? "Spell Selection" : "Selección de Hechizo";
+            lblClase.Text = _idiomaActual == Idioma.EN ? "Select class:" : "Selecciona clase:";
+            lblHechizo.Text = _idiomaActual == Idioma.EN ? "Select spell:" : "Selecciona hechizo:";
+            btnMostrar.Text = _idiomaActual == Idioma.EN ? "Show spell" : "Mostrar hechizo";
+
+            // Repoblar combos con visualización traducida pero manteniendo claves ES
+            var claseSeleccionadaKey = (cbClase.SelectedItem as ComboItem)?.KeyEs;
+            cbClase.Items.Clear();
+            foreach (var claseEs in _hechizos.Keys)
+            {
+                var display = _idiomaActual == Idioma.EN && _trClases.TryGetValue(claseEs, out var en) ? en : claseEs;
+                cbClase.Items.Add(new ComboItem(claseEs, display));
+            }
+            if (cbClase.Items.Count > 0)
+            {
+                int idx = 0;
+                if (claseSeleccionadaKey != null)
+                {
+                    idx = cbClase.Items.Cast<ComboItem>().ToList().FindIndex(i => i.KeyEs == claseSeleccionadaKey);
+                    if (idx < 0) idx = 0;
+                }
+                cbClase.SelectedIndex = idx;
+            }
+
+            // Repoblar hechizos para la clase actual
+            cbClase_SelectedIndexChanged(null, EventArgs.Empty);
         }
     }
 }
