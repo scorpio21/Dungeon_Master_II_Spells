@@ -10,6 +10,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -132,7 +135,7 @@ jobs:
       - name: Crear release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
+          tag_name: ${{ steps.get_version.outputs.version }}
           name: Versión ${{ steps.get_version.outputs.version }}
           body: |
             ## Cambios en esta versión
