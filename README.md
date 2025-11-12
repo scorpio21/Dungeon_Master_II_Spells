@@ -1,4 +1,4 @@
-# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.5
+# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.6.2
 
 ## Capturas
 
@@ -14,7 +14,12 @@ Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conju
 
 > Fuente de datos: “Dungeon Master II Spells - Dungeon Master II Solutions - Dungeon Master II - Games - Dungeon Master Encyclopaedia”.
 
-> Novedad v1.0.5: interfaz multilenguaje (Español/Inglés) con selector en la aplicación.
+> Novedades v1.0.6.2:
+> - Instalador multilenguaje (ES/EN) con autodetección por idioma del SO.
+> - Versión visible en “Ayuda > Acerca de…”.
+> - ZIP portable incluye la carpeta `img/`.
+> - Refactor de utilidades de imágenes (carga segura y rutas centralizadas).
+> - Mejora UI Monedas: botón Cerrar junto a Calcular y textos localizados.
 
 ## Características
 
@@ -78,6 +83,13 @@ Magias/
   - Ejemplos: `Health.gif`, `Mana.gif`, `Shield.gif`, `vacia.png`, `veneno.gif`.
 
 La aplicación detecta primero `img/` dentro de la carpeta del proyecto y, si no existe, busca rutas alternativas conocidas.
+
+## Descarga
+
+- Descarga el instalador o la versión portable desde “Releases”:
+  - https://github.com/scorpio21/Dungeon_Master_II_Spells/releases
+  - Instalador: `Grimorio_de_Hechizos_vX.Y.Z_Setup.exe` (selecciona idioma automáticamente según Windows).
+  - Portable: `SpellBookWinForms_portable.zip` o `Grimorio_de_Hechizos_vX.Y.Z_Portable.zip` (incluye `img/`).
 
 ## Compilación y ejecución
 

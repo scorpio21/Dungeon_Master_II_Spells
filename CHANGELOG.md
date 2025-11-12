@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.0.6.2] - 2025-11-12
+
+### Añadido
+
+- Diálogo “Ayuda > Acerca de” con versión dinámica (Application.ProductVersion) y localización ES/EN.
+
+### Mejorado
+
+- Instalador multilenguaje (ES/EN) con autodetección por idioma del SO (LanguageDetectionMethod=uilanguage).
+- Alineado `MyAppVersion` del instalador a 1.0.6.2.
+- ZIP portable incluye la carpeta `img/`.
+- Refactor de utilidades de imágenes (clase `Imagenes`): rutas centralizadas, carga segura y reemplazo con dispose.
+- MonedasForm: botón Cerrar junto a Calcular y textos localizados; sin solapes.
+
+### CI/CD
+
+- Workflow de GitHub Actions actualizado para disparar en tags `v*` y crear releases automáticos adjuntando Setup y ZIPs.
+- Permisos `contents: write` añadidos y uso de tag limpio en acción de release.
+
+### Correcciones
+
+- Ajustes de permisos del token de GitHub para crear releases (error 403 resuelto en nueva ejecución con tag v1.0.6.2).
+
 ## [1.0.5] - 2025-11-12
 
 ### Añadido
