@@ -31,6 +31,25 @@ namespace SpellBookWinForms
         
         private Dictionary<string, Image> imagenesMonedas = new();
         private string rutaImagenes = Path.Combine(Directory.GetCurrentDirectory(), "img", "objetos", "monedas");
+        private ComboBox cmbMoneda = null!;
+
+        private sealed class ComboItem
+        {
+            public string KeyEs { get; }
+            public string Display { get; }
+            public ComboItem(string keyEs, string display) { KeyEs = keyEs; Display = display; }
+            public override string ToString() => Display;
+        }
+
+        private readonly Dictionary<string, string> _trMonedas = new()
+        {
+            ["Moneda de Cobre"] = "Copper Coin",
+            ["Moneda de Plata"] = "Silver Coin",
+            ["Moneda de Oro"] = "Gold Coin",
+            ["Gema Verde"] = "Green Gem",
+            ["Gema Roja"] = "Red Gem",
+            ["Gema Azul"] = "Blue Gem",
+        };
 
         public MonedasForm(bool english = false)
         {
@@ -63,7 +82,7 @@ namespace SpellBookWinForms
             };
 
             // Crear un ComboBox con imágenes
-            var cmbMoneda = new ComboBox
+            cmbMoneda = new ComboBox
             {
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Location = new Point(20, 95),
@@ -78,27 +97,33 @@ namespace SpellBookWinForms
                 e.DrawBackground();
                 if (e.Index >= 0 && e.Index < cmbMoneda.Items.Count)
                 {
-                    var nombreMoneda = cmbMoneda.Items[e.Index]?.ToString();
+                    var item = cmbMoneda.Items[e.Index] as ComboItem;
+                    var nombreMoneda = item?.KeyEs;
                     if (!string.IsNullOrEmpty(nombreMoneda) && monedas.TryGetValue(nombreMoneda, out var monedaInfo))
                     {
                         // Dibujar la imagen si existe
                         if (imagenesMonedas.TryGetValue(monedaInfo.imagen, out var imagen) && imagen != null)
                         {
-                            e.Graphics.DrawImage(imagen, e.Bounds.Left + 2, e.Bounds.Top + 2, 26, 26);
+                            try { e.Graphics.DrawImage(imagen, e.Bounds.Left + 2, e.Bounds.Top + 2, 26, 26); } catch { /* imagen inválida */ }
                         }
                         
                         // Dibujar el texto
                         using (var brush = new SolidBrush(e.ForeColor))
                         using (var font = new Font(e.Font ?? SystemFonts.DefaultFont, FontStyle.Regular))
                         {
-                            e.Graphics.DrawString(nombreMoneda, font, brush, e.Bounds.Left + 35, e.Bounds.Top + 6);
+                            var display = item?.Display ?? nombreMoneda;
+                            e.Graphics.DrawString(display, font, brush, e.Bounds.Left + 35, e.Bounds.Top + 6);
                         }
                     }
                 }
             };
             
-            // Agregar las monedas al ComboBox
-            cmbMoneda.Items.AddRange(monedas.Keys.ToArray());
+            // Agregar las monedas al ComboBox con visualización traducida
+            foreach (var nombreEs in monedas.Keys)
+            {
+                var display = _en && _trMonedas.TryGetValue(nombreEs, out var en) ? en : nombreEs;
+                cmbMoneda.Items.Add(new ComboItem(nombreEs, display));
+            }
             cmbMoneda.SelectedIndex = 0;
 
             var lblCantidad = new Label
@@ -135,7 +160,7 @@ namespace SpellBookWinForms
 
             btnCalcular.Click += (s, e) =>
             {
-                var monedaSeleccionada = cmbMoneda.SelectedItem?.ToString();
+                var monedaSeleccionada = (cmbMoneda.SelectedItem as ComboItem)?.KeyEs;
                 if (monedaSeleccionada == null) return;
 
                 var cantidad = (int)numCantidad.Value;
@@ -237,7 +262,7 @@ namespace SpellBookWinForms
 
                 var lblMonedaSeleccionada = new Label
                 {
-                    Text = $"= {cantidad:N0} {monedaSeleccionada}",
+                    Text = $"= {cantidad:N0} {(cmbMoneda.SelectedItem as ComboItem)?.Display}",
                     Location = new Point(35, 10),
                     AutoSize = true,
                     Font = new Font("Segoe UI", 10, FontStyle.Bold)
@@ -316,7 +341,7 @@ namespace SpellBookWinForms
                         // Agregar nombre de la moneda
                         var lblNombre = new Label
                         {
-                            Text = nombre,
+                            Text = _en && _trMonedas.TryGetValue(nombre, out var nombreEn) ? nombreEn : nombre,
                             Location = new Point(120, 10),
                             AutoSize = true
                         };
@@ -445,6 +470,9 @@ namespace SpellBookWinForms
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            // Evitar owner-draw durante el cierre para que no intente repintar con imágenes ya liberadas
+            try { if (cmbMoneda != null) cmbMoneda.DrawMode = DrawMode.Normal; } catch { }
+
             // Liberar recursos de las imágenes
             foreach (var imagen in imagenesMonedas.Values)
             {
