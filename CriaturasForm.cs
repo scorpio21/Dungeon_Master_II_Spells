@@ -21,6 +21,7 @@ namespace SpellBookWinForms
         private Label lblStats = null!;
         private Label lblHabs = null!;
         private Label lblNotes = null!;
+        private Button btnSalir = null!;
 
         private List<Creature> _all = new();
         private bool _en => string.Equals(Settings.Default.Idioma, "EN", StringComparison.OrdinalIgnoreCase);
@@ -84,9 +85,12 @@ namespace SpellBookWinForms
             var lblFiltro = new Label { Text = _en ? "Habitat:" : "Hábitat:", AutoSize = true, Left = 8, Top = 8 };
             cbHabitat.Left = lblFiltro.Right + 8; cbHabitat.Top = 4; cbHabitat.Width = 200;
             txtBuscar.Top = 4; txtBuscar.Left = cbHabitat.Right + 12; txtBuscar.Width = 300;
+            btnSalir = new Button { Text = _en ? "Close" : "Salir", Dock = DockStyle.Right, Width = 90 };
+            btnSalir.Click += (_, __) => Close();
             filterPanel.Controls.Add(lblFiltro);
             filterPanel.Controls.Add(cbHabitat);
             filterPanel.Controls.Add(txtBuscar);
+            filterPanel.Controls.Add(btnSalir);
 
             var leftPanel = new Panel { Dock = DockStyle.Left, Width = 320 };
             leftPanel.Controls.Add(lst);
@@ -175,9 +179,10 @@ namespace SpellBookWinForms
             lblNombre.Text = c.Name.Get(_en);
             lblHabitat.Text = ($"{(_en ? "Habitat" : "Hábitat")}: " + c.Habitat.Get(_en)).Trim();
 
-            string imgDir = Path.Combine(AppContext.BaseDirectory, "img", "criaturas");
-            string imgPath = Path.Combine(imgDir, c.Image);
-            pic.Image = File.Exists(imgPath) ? Image.FromFile(imgPath) : null;
+            string imgDir = Path.Combine(Imagenes.BaseImgPath(), "criaturas");
+            string? ruta = Imagenes.BuscarImagen(imgDir, c.Image, ".png", ".gif", ".jpg", ".jpeg");
+            var img = ruta != null ? Imagenes.CargarImagenSegura(ruta) : null;
+            Imagenes.ReemplazarImagen(pic, img);
 
             lblStats.Text = FormatearStats(c.Stats);
             var ab = c.SpecialAbilities.Get(_en);
