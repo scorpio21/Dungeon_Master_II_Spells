@@ -44,6 +44,9 @@ Source: "{#PublishDir}\\*"; DestDir: "{app}"; Flags: recursesubdirs ignoreversio
 ; Incluir la carpeta img con todas sus subcarpetas y archivos
 Source: "img\*"; DestDir: "{app}\img"; Flags: recursesubdirs createallsubdirs ignoreversion
 
+; Incluir la carpeta data con tablas externas
+Source: "data\*"; DestDir: "{app}\data"; Flags: recursesubdirs createallsubdirs ignoreversion
+
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\\{#MyAppExeName}"
 Name: "{group}\Desinstalar {#MyAppName}"; Filename: "{uninstallexe}"
