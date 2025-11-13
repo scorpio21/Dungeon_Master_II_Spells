@@ -667,7 +667,7 @@ namespace SpellBookWinForms
             };
             
             // Opción de Criaturas
-            menuCriaturas = new ToolStripMenuItem("Criaturas");
+            menuCriaturas = new ToolStripMenuItem(_idiomaActual == Idioma.EN ? "Creatures" : "Criaturas");
             menuCriaturas.Click += (s, e) =>
             {
                 var frm = new CriaturasForm();
@@ -738,6 +738,7 @@ namespace SpellBookWinForms
             // Textos de menú
             menuUtilidades.Text = T("Menu.Utilities");
             menuCalculadoraMonedas.Text = T("Menu.CurrencyCalculator");
+            menuCriaturas.Text = _idiomaActual == Idioma.EN ? "Creatures" : "Criaturas";
             menuIdioma.Text = T("Menu.Language");
             menuEs.Text = T("Menu.Spanish");
             menuEn.Text = T("Menu.English");
