@@ -5,6 +5,7 @@
 ### Añadido
 
 - Diálogo “Ayuda > Acerca de” con versión dinámica (Application.ProductVersion) y localización ES/EN.
+- Tablas externas de costes/dificultad: `data/tabla_dificultad_mana.json` (carga con fallback a valores internos).
 
 ### Mejorado
 

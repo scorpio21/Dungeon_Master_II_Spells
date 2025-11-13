@@ -33,8 +33,8 @@ Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conju
   - Gemas Rojas (256)
   - Gemas Azules (1024)
 - Cálculo del coste total de Maná/Dificultad por nivel:
-  - Poder = nivel (1..6).
-  - Cada símbolo escala como floor(PL1 × (nivel + 1) / 2).
+  - Maná: el poder afecta al coste, usando la tabla por nivel (Lo..Mon) cargada desde `data/tabla_dificultad_mana.json`.
+  - Dificultad: no escala con poder; se calcula como (poder) + suma de dificultades base por rúbrica.
 - Iconografía de símbolos y frascos de pociones.
 - Tooltips con descripción y familia de cada símbolo.
 
@@ -57,6 +57,8 @@ Magias/
     MainForm.resx
     README.md
     .gitignore
+    data/
+      tabla_dificultad_mana.json   # Tablas externas de maná por nivel y dificultad base
     img/                      # Iconos de símbolos y poder
       lo.png, um.png, ...
     img/posiones/            # Frascos de pociones

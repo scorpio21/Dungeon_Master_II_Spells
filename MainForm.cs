@@ -7,6 +7,7 @@ using SpellBookWinForms.Properties;
 using System.Resources;
 using System.Linq;
 using System.Windows.Forms;
+using System.Text.Json;
 
 namespace SpellBookWinForms
 {
@@ -15,6 +16,7 @@ namespace SpellBookWinForms
         private readonly Dictionary<string, Dictionary<string, (string Simbolos, string Efecto)>> _hechizos;
         private readonly Dictionary<string, int> _manaPL1;
         private readonly Dictionary<string, int> _diffBase;
+        private readonly Dictionary<string, int[]> _manaPorNivel = new();
         private readonly Dictionary<string, string> _simboloDescripcion;
         private readonly Dictionary<string, string> _simboloFamilia;
         private readonly Dictionary<string, int> _poderMap = new() { {"Lo",1},{"Um",2},{"On",3},{"Ee",4},{"Pal",5},{"Mon",6} };
@@ -249,6 +251,9 @@ namespace SpellBookWinForms
                 ["Ku"]="Class / Alignment", ["Ros"]="Class / Alignment", ["Dain"]="Class / Alignment", ["Neta"]="Class / Alignment", ["Ra"]="Class / Alignment", ["Sar"]="Class / Alignment",
             };
 
+            // Intentar cargar tablas externas (JSON) y sobreescribir valores si procede
+            CargarTablasExternas();
+
             // Inicializar combos
             // Poblar clases con items que conservan clave ES pero muestran según idioma
             cbClase.Items.Clear();
@@ -401,12 +406,73 @@ namespace SpellBookWinForms
             {
                 int baseMana = _manaPL1.TryGetValue(s, out var bm) ? bm : 0;
                 int baseDiff = _diffBase.TryGetValue(s, out var bd) ? bd : 0;
-                int m = (int)Math.Floor(baseMana * factor);
+                int m;
+                if (_manaPorNivel.TryGetValue(s, out var niveles) && niveles.Length >= nivel)
+                {
+                    m = niveles[nivel - 1];
+                }
+                else
+                {
+                    m = (int)Math.Floor(baseMana * factor);
+                }
                 int d = baseDiff; // la dificultad no escala con el poder
                 mana += m; diff += d;
                 detalles.Add($"{s}: {manaWord} {m}, {diffWord} {d} — {familyWord}: {_simboloFamilia.GetValueOrDefault(s, unknownFamily)}");
             }
             return (mana, diff, detalles);
+        }
+
+        private void CargarTablasExternas()
+        {
+            try
+            {
+                var ruta = Path.Combine(AppContext.BaseDirectory, "data", "tabla_dificultad_mana.json");
+                if (!File.Exists(ruta))
+                {
+                    // Intento alternativo: relativo al proyecto/carpeta de trabajo
+                    var rutaAlt = Path.Combine(Directory.GetCurrentDirectory(), "data", "tabla_dificultad_mana.json");
+                    if (File.Exists(rutaAlt)) ruta = rutaAlt; else return;
+                }
+
+                using var fs = File.OpenRead(ruta);
+                using var doc = JsonDocument.Parse(fs);
+                var root = doc.RootElement;
+
+                if (root.TryGetProperty("mana", out var manaObj) && manaObj.ValueKind == JsonValueKind.Object)
+                {
+                    foreach (var prop in manaObj.EnumerateObject())
+                    {
+                        var key = prop.Name;
+                        if (prop.Value.ValueKind == JsonValueKind.Array)
+                        {
+                            var arr = prop.Value.EnumerateArray().Select(e => e.GetInt32()).ToArray();
+                            if (arr.Length >= 1)
+                            {
+                                _manaPorNivel[key] = arr;
+                                // Si tenemos PL1 y coincide con JSON, mantener; si no existe en _manaPL1, usar primer valor como PL1
+                                if (!_manaPL1.ContainsKey(key) && arr.Length > 0)
+                                    _manaPL1[key] = arr[0];
+                            }
+                        }
+                    }
+                }
+
+                if (root.TryGetProperty("diff", out var diffObj) && diffObj.ValueKind == JsonValueKind.Object)
+                {
+                    foreach (var prop in diffObj.EnumerateObject())
+                    {
+                        var key = prop.Name;
+                        if (prop.Value.ValueKind == JsonValueKind.Number)
+                        {
+                            _diffBase[key] = prop.Value.GetInt32();
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Fallback silencioso a tablas embebidas
+            }
         }
 
         private void RenderSimbolos(string simbolos)
