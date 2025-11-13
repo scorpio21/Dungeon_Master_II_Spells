@@ -13,7 +13,8 @@ namespace SpellBookWinForms
     public partial class MainForm : Form
     {
         private readonly Dictionary<string, Dictionary<string, (string Simbolos, string Efecto)>> _hechizos;
-        private readonly Dictionary<string, (int mana, int diff)> _valoresPL1;
+        private readonly Dictionary<string, int> _manaPL1;
+        private readonly Dictionary<string, int> _diffBase;
         private readonly Dictionary<string, string> _simboloDescripcion;
         private readonly Dictionary<string, string> _simboloFamilia;
         private readonly Dictionary<string, int> _poderMap = new() { {"Lo",1},{"Um",2},{"On",3},{"Ee",4},{"Pal",5},{"Mon",6} };
@@ -199,16 +200,24 @@ namespace SpellBookWinForms
                 }
             };
 
-            _valoresPL1 = new()
+            _manaPL1 = new()
             {
-                // Poder (se suma nivel directamente)
-                ["Lo"]=(1,1), ["Um"]=(2,2), ["On"]=(3,3), ["Ee"]=(4,4), ["Pal"]=(5,5), ["Mon"]=(6,6),
                 // Elemental influence
-                ["Ya"]=(2,2), ["Vi"]=(3,3), ["Oh"]=(4,4), ["Ful"]=(5,5), ["Des"]=(6,6), ["Zo"]=(7,7),
+                ["Ya"]=2, ["Vi"]=3, ["Oh"]=4, ["Ful"]=5, ["Des"]=6, ["Zo"]=7,
                 // Form
-                ["Ven"]=(4,4), ["Ew"]=(5,5), ["Kath"]=(6,6), ["Ir"]=(7,7), ["Bro"]=(7,7), ["Gor"]=(9,9),
+                ["Ven"]=4, ["Ew"]=5, ["Kath"]=6, ["Ir"]=7, ["Bro"]=7, ["Gor"]=9,
                 // Class / Alignment
-                ["Ku"]=(2,2), ["Ros"]=(2,2), ["Dain"]=(3,3), ["Neta"]=(4,4), ["Ra"]=(6,6), ["Sar"]=(7,7),
+                ["Ku"]=2, ["Ros"]=2, ["Dain"]=3, ["Neta"]=4, ["Ra"]=6, ["Sar"]=7,
+            };
+
+            _diffBase = new()
+            {
+                // Elemental influence
+                ["Ya"]=2, ["Vi"]=3, ["Oh"]=4, ["Ful"]=5, ["Des"]=6, ["Zo"]=7,
+                // Form
+                ["Ven"]=4, ["Ew"]=5, ["Kath"]=6, ["Ir"]=7, ["Bro"]=7, ["Gor"]=9,
+                // Class / Alignment
+                ["Ku"]=2, ["Ros"]=2, ["Dain"]=3, ["Neta"]=4, ["Ra"]=6, ["Sar"]=7,
             };
 
             _simboloDescripcion = new()
@@ -390,12 +399,10 @@ namespace SpellBookWinForms
             double factor = (nivel + 1) / 2.0;
             foreach (var s in partes.Skip(1))
             {
-                // Desestructurar para no perder los nombres de tupla al usar valores por defecto
-                (int baseMana, int baseDiff) = _valoresPL1.TryGetValue(s, out var tmp)
-                    ? tmp
-                    : (0, 0);
+                int baseMana = _manaPL1.TryGetValue(s, out var bm) ? bm : 0;
+                int baseDiff = _diffBase.TryGetValue(s, out var bd) ? bd : 0;
                 int m = (int)Math.Floor(baseMana * factor);
-                int d = (int)Math.Floor(baseDiff * factor);
+                int d = baseDiff; // la dificultad no escala con el poder
                 mana += m; diff += d;
                 detalles.Add($"{s}: {manaWord} {m}, {diffWord} {d} — {familyWord}: {_simboloFamilia.GetValueOrDefault(s, unknownFamily)}");
             }
