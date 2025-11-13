@@ -24,6 +24,7 @@ namespace SpellBookWinForms
         private MenuStrip menuPrincipal = null!;  // Inicialización no nula asegurada en el constructor
         private ToolStripMenuItem menuUtilidades = null!;
         private ToolStripMenuItem menuCalculadoraMonedas = null!;
+        private ToolStripMenuItem menuCriaturas = null!;
         private ToolStripMenuItem menuIdioma = null!;
         private ToolStripMenuItem menuEs = null!;
         private ToolStripMenuItem menuEn = null!;
@@ -665,8 +666,17 @@ namespace SpellBookWinForms
                 monedasForm.ShowDialog();
             };
             
+            // Opción de Criaturas
+            menuCriaturas = new ToolStripMenuItem("Criaturas");
+            menuCriaturas.Click += (s, e) =>
+            {
+                var frm = new CriaturasForm();
+                frm.ShowDialog();
+            };
+            
             // Agregar opciones al menú
             menuUtilidades.DropDownItems.Add(menuCalculadoraMonedas);
+            menuUtilidades.DropDownItems.Add(menuCriaturas);
             
             // Menú de Idioma
             menuIdioma = new ToolStripMenuItem("Idioma");
