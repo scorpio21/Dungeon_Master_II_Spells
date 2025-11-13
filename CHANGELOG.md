@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.0.6.3] - 2025-11-14
+
+### Añadido
+
+- Nueva pantalla "Criaturas" con búsqueda, filtro por hábitat y panel de detalle (imagen, stats, habilidades, notas).
+- Cálculo de "Golpes necesarios" para derrotar criaturas con Fireball/Lightning por nivel de poder, configurable en `data/spell_damage.json`.
+
+### Mejorado
+
+- Datos de criaturas completados (ES/EN) y assets DOS copiados a `img/criaturas/`.
+- Carga de imágenes de criaturas usando `Imagenes.BaseImgPath()` y `Imagenes.CargarImagenSegura()`.
+- Localización del menú “Criaturas” (ES/EN) y layout del formulario (botón Salir visible, sin solapes).
+
+### Instalador
+
+- Actualización de `installer.iss` a versión 1.0.6.3. El instalador incluye `img/` y `data/`.
+
+### Notas
+
+- El modelo de daño es aproximado y configurable; se puede ajustar `resistanceScale` y tablas por poder en `data/spell_damage.json`.
+
 ## [1.0.6.2] - 2025-11-12
 
 ### Añadido

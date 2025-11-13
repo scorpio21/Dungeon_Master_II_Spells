@@ -1,4 +1,4 @@
-# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.6.2
+# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.6.3
 
 ## Capturas
 
@@ -14,12 +14,12 @@ Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conju
 
 > Fuente de datos: “Dungeon Master II Spells - Dungeon Master II Solutions - Dungeon Master II - Games - Dungeon Master Encyclopaedia”.
 
-> Novedades v1.0.6.2:
-> - Instalador multilenguaje (ES/EN) con autodetección por idioma del SO.
-> - Versión visible en “Ayuda > Acerca de…”.
-> - ZIP portable incluye la carpeta `img/`.
-> - Refactor de utilidades de imágenes (carga segura y rutas centralizadas).
-> - Mejora UI Monedas: botón Cerrar junto a Calcular y textos localizados.
+> Novedades v1.0.6.3:
+> - Nueva pantalla “Criaturas” con búsqueda, filtro por hábitat y detalle (imagen, stats, habilidades, notas).
+> - Datos de criaturas completados (ES/EN) y assets en `img/criaturas/` (versión DOS).
+> - Cálculo de “Golpes necesarios” para Fireball/Lightning por poder (configurable en `data/spell_damage.json`), aplicando resistencias.
+> - Localización del menú “Criaturas” (ES/EN) y ajustes de layout (botón Salir visible, sin solapes).
+> - Mejoras de carga de imágenes en criaturas usando `Imagenes.BaseImgPath()`.
 
 ## Características
 
