@@ -22,6 +22,7 @@
 ### Correcciones
 
 - Ajustes de permisos del token de GitHub para crear releases (error 403 resuelto en nueva ejecución con tag v1.0.6.2).
+- Corrección de cálculo: la Dificultad total no debe ser igual al Maná total. Ahora la dificultad se calcula como (poder) + suma de dificultades base de las rúbricas, mientras que el maná escala con el poder. (fix en 7484265)
 
 ## [1.0.5] - 2025-11-12
 
