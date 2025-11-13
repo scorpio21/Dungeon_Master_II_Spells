@@ -135,14 +135,14 @@
     { "id": "dru_tan", "name": { "es": "Dru Tan", "en": "Dru Tan" }, "habitat": { "es": "Caverna", "en": "Cavern" },
       "stats": { "hp": 600, "weight": 254, "attackStrength": 160, "armorStrength": 220, "dexterity": 120, "attackFerocity": 11, "retreatFerocity": 12, "poisonStrength": 0, "magicResistance": 8, "fireResistance": 8, "poisonResistance": 11 },
       "specialAbilities": { "es": "-", "en": "-" }, "image": "dru_tan.png", "notes": { "es": "", "en": "" } },
-    { "id": "evil_attack_minion_alternate", "name": { "es": "Evil Attack Minion (Alternate)", "en": "Evil Attack Minion (Alternate)" }, "habitat": { "es": "", "en": "" },
-      "stats": { "hp": 0, "weight": 0, "attackStrength": 0, "armorStrength": 0, "dexterity": 0, "attackFerocity": 0, "retreatFerocity": 0, "poisonStrength": 0, "magicResistance": 0, "fireResistance": 0, "poisonResistance": 0 },
+    { "id": "evil_attack_minion_alternate", "name": { "es": "Evil Attack Minion (Alternate)", "en": "Evil Attack Minion (Alternate)" }, "habitat": { "es": "Cualquier lugar", "en": "Anywhere" },
+      "stats": { "hp": 300, "weight": 10, "attackStrength": 45, "armorStrength": 75, "dexterity": 180, "attackFerocity": 12, "retreatFerocity": 14, "poisonStrength": 0, "magicResistance": 15, "fireResistance": 7, "poisonResistance": 12 },
       "specialAbilities": { "es": "-", "en": "-" }, "image": "evil_attack_minion_alternate.png", "notes": { "es": "", "en": "" } },
-    { "id": "chest", "name": { "es": "Chest", "en": "Chest" }, "habitat": { "es": "", "en": "" },
+    { "id": "chest", "name": { "es": "Chest", "en": "Chest" }, "habitat": { "es": "Skullkeep", "en": "Skullkeep" },
       "stats": { "hp": 0, "weight": 0, "attackStrength": 0, "armorStrength": 0, "dexterity": 0, "attackFerocity": 0, "retreatFerocity": 0, "poisonStrength": 0, "magicResistance": 0, "fireResistance": 0, "poisonResistance": 0 },
-      "specialAbilities": { "es": "-", "en": "Flying chest; flees from party" }, "image": "chest.png", "notes": { "es": "", "en": "" } },
-    { "id": "invisible_creatures", "name": { "es": "Invisible creatures", "en": "Invisible creatures" }, "habitat": { "es": "", "en": "" },
+      "specialAbilities": { "es": "Cofre volador; huye del grupo", "en": "Flying chest; flees from party" }, "image": "chest.png", "notes": { "es": "", "en": "" } },
+    { "id": "invisible_creatures", "name": { "es": "Invisible creatures", "en": "Invisible creatures" }, "habitat": { "es": "Área Clan Nube y Skullkeep", "en": "Cloud Clan area and Skullkeep" },
       "stats": { "hp": 0, "weight": 0, "attackStrength": 0, "armorStrength": 0, "dexterity": 0, "attackFerocity": 0, "retreatFerocity": 0, "poisonStrength": 0, "magicResistance": 0, "fireResistance": 0, "poisonResistance": 0 },
-      "specialAbilities": { "es": "-", "en": "Pit/Door Ghost mechanics" }, "image": "invisible_creatures.png", "notes": { "es": "", "en": "" } }
+      "specialAbilities": { "es": "Mecánicas de Fantasma de Foso/Puerta", "en": "Pit/Door Ghost mechanics" }, "image": "invisible_creatures.png", "notes": { "es": "", "en": "" } }
   ]
 }
