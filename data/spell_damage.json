@@ -1,0 +1,5 @@
+{
+  "Fireball": [20, 30, 45, 65, 90, 120],
+  "Lightning": [18, 28, 42, 60, 82, 110],
+  "resistanceScale": 20
+}
