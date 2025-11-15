@@ -1,7 +1,7 @@
 Guía: Compilar, Preparar y Regenerar Instalador (Inno Setup)
 
 Proyecto: Grimorio de Hechizos (WinForms .NET 8)
-Versión instalador: 1.0.6.3
+Versión instalador: 1.0.6.4
 
 1) Preparar cambios en imágenes y código
 - Coloca nuevas imágenes de objetos en: img/objetos/
@@ -32,13 +32,13 @@ if (!(Test-Path $iss)) { $iss = 'C:\Program Files\Inno Setup 6\ISCC.exe' }
 & "$iss" '/Sspawn=0' '/V=1' "/O$pwd\publish" "$pwd\installer.iss"
 
 # Salida esperada del instalador
-L:\Magias\SpellBookWinForms_Clean\publish\Grimorio_de_Hechizos_v1.0.6.3_Setup.exe
+L:\Magias\SpellBookWinForms_Clean\publish\Grimorio_de_Hechizos_v1.0.6.4_Setup.exe
 
 3b) Crear versión portable (ZIP)
 
 # Generar ZIP portable con ejecutable publicado + img + data
 $ErrorActionPreference='Stop'
-$out = 'publish/Grimorio_de_Hechizos_v1.0.6.3_Portable.zip'
+$out = 'publish/Grimorio_de_Hechizos_v1.0.6.4_Portable.zip'
 if (Test-Path $out) { Remove-Item $out -Force }
 Compress-Archive -Path 'publish/win-x64-singlefile/*','img/*','data/*' -DestinationPath $out -Force
 
