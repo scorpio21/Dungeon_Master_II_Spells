@@ -25,6 +25,7 @@ namespace SpellBookWinForms
         private ToolStripMenuItem menuUtilidades = null!;
         private ToolStripMenuItem menuCalculadoraMonedas = null!;
         private ToolStripMenuItem menuCriaturas = null!;
+        private ToolStripMenuItem menuObjetos = null!;
         private ToolStripMenuItem menuIdioma = null!;
         private ToolStripMenuItem menuEs = null!;
         private ToolStripMenuItem menuEn = null!;
@@ -690,6 +691,15 @@ namespace SpellBookWinForms
 
             CargarIconosIdioma();
 
+            // Menú de Objetos / Items
+            menuObjetos = new ToolStripMenuItem(T("Menu.Items"));
+            menuObjetos.Click += (s, e) =>
+            {
+                // El formulario de Objetos se implementará en un paso posterior
+                using var frm = new ObjetosForm();
+                frm.ShowDialog();
+            };
+
             // Menú de Ayuda > Acerca de
             menuAyuda = new ToolStripMenuItem("Ayuda");
             menuAcerca = new ToolStripMenuItem("Acerca de...");
@@ -704,6 +714,7 @@ namespace SpellBookWinForms
 
             // Agregar menú principal
             menuPrincipal.Items.Add(menuUtilidades);
+            menuPrincipal.Items.Add(menuObjetos);
             menuPrincipal.Items.Add(menuIdioma);
             menuPrincipal.Items.Add(menuAyuda);
             
@@ -739,6 +750,7 @@ namespace SpellBookWinForms
             menuUtilidades.Text = T("Menu.Utilities");
             menuCalculadoraMonedas.Text = T("Menu.CurrencyCalculator");
             menuCriaturas.Text = _idiomaActual == Idioma.EN ? "Creatures" : "Criaturas";
+            menuObjetos.Text = T("Menu.Items");
             menuIdioma.Text = T("Menu.Language");
             menuEs.Text = T("Menu.Spanish");
             menuEn.Text = T("Menu.English");

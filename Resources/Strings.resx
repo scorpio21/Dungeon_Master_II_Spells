@@ -34,6 +34,7 @@
   <!-- MainForm menu and UI -->
   <data name="Menu.Utilities" xml:space="preserve"><value>Utilidades</value></data>
   <data name="Menu.CurrencyCalculator" xml:space="preserve"><value>Calculadora de Monedas</value></data>
+  <data name="Menu.Items" xml:space="preserve"><value>Objetos</value></data>
   <data name="Menu.Language" xml:space="preserve"><value>Idioma</value></data>
   <data name="Menu.Spanish" xml:space="preserve"><value>Español</value></data>
   <data name="Menu.English" xml:space="preserve"><value>Inglés</value></data>
