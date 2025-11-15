@@ -1,4 +1,4 @@
-# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.6.3
+# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.6.4
 
 ## Capturas
 
@@ -14,12 +14,12 @@ Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conju
 
 > Fuente de datos: “Dungeon Master II Spells - Dungeon Master II Solutions - Dungeon Master II - Games - Dungeon Master Encyclopaedia”.
 
-> Novedades v1.0.6.3:
-> - Nueva pantalla “Criaturas” con búsqueda, filtro por hábitat y detalle (imagen, stats, habilidades, notas).
-> - Datos de criaturas completados (ES/EN) y assets en `img/criaturas/` (versión DOS).
-> - Cálculo de “Golpes necesarios” para Fireball/Lightning por poder (configurable en `data/spell_damage.json`), aplicando resistencias.
-> - Localización del menú “Criaturas” (ES/EN) y ajustes de layout (botón Salir visible, sin solapes).
-> - Mejoras de carga de imágenes en criaturas usando `Imagenes.BaseImgPath()`.
+> Novedades v1.0.6.4:
+> - Nueva pantalla **“Objetos”** con listado, búsqueda y filtro por tipo (Espada, Arco, Bastón, Armadura, Escudo, etc.).
+> - Archivo `data/objetos_armas.json` con todas las armas ofensivas (espadas, hachas, mazas, arcos, bastones, bombas, minions, escudos) y armaduras (ligeras, pesadas, cascos, botas) con datos reales (ES/EN) e imágenes.
+> - Vista de **sets de armadura** (Fire, Ra Sar, Mithral, Tech…) con disposición en “maniquí” (casco, torso, piernas, botas, escudo, arma) al activar el filtro "Solo sets".
+> - Ajustes de carga de imágenes de objetos usando `Imagenes.BaseImgPath()` y nuevo visor de imágenes con tamaño optimizado para sprites 16x16.
+> - Pequeñas mejoras de interfaz en la pantalla de Objetos y filtros.
 
 ## Características
 

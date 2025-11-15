@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.6.4] - 2025-11-15
+
+### Añadido
+
+- Nueva pantalla "Objetos" con listado, búsqueda y filtro por tipo (Espada, Arco, Bastón, Armadura, Escudo, etc.).
+- Archivo `data/objetos_armas.json` con armas ofensivas (espadas, hachas, mazas, arcos, bastones, bombas, minions, escudos) y armaduras (ligeras, pesadas, cascos, botas) con datos reales (ES/EN) e imágenes.
+- Vista de conjuntos ("Solo sets") para Fire / Ra Sar / Mithral / Tech que muestra las piezas en disposición de maniquí (casco, torso, piernas, botas, escudo, arma).
+
+### Mejorado
+
+- Tamaño y carga de imágenes de objetos para sprites pequeños (16x16), evitando escalados exagerados.
+- Detalles de interfaz y filtros en el formulario de Objetos.
+
+### Instalador
+
+- Actualización de `installer.iss` a versión 1.0.6.4. El instalador incluye `img/` y `data/` con los nuevos objetos.
+
 ## [1.0.6.3] - 2025-11-14
 
 ### Añadido
