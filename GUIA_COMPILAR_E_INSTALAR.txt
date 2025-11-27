@@ -40,10 +40,40 @@ L:\Magias\SpellBookWinForms_Clean\publish\Grimorio_de_Hechizos_v1.0.6.4_Setup.ex
 $ErrorActionPreference='Stop'
 $out = 'publish/Grimorio_de_Hechizos_v1.0.6.4_Portable.zip'
 if (Test-Path $out) { Remove-Item $out -Force }
-Compress-Archive -Path 'publish/win-x64-singlefile/*','img/*','data/*' -DestinationPath $out -Force
+
+# Crear carpeta temporal
+$tempDir = Join-Path $env:TEMP "SpellBookPortable"
+if (Test-Path $tempDir) { Remove-Item $tempDir -Recurse -Force }
+New-Item -ItemType Directory -Path $tempDir | Out-Null
+
+# Copiar solo el ejecutable
+Copy-Item -Path 'publish/win-x64-singlefile/SpellBookWinForms.exe' -Destination $tempDir
+
+# Crear carpetas necesarias
+New-Item -ItemType Directory -Path "$tempDir\img" -Force | Out-Null
+New-Item -ItemType Directory -Path "$tempDir\data" -Force | Out-Null
+
+# Copiar contenido de img y data
+Copy-Item -Path 'img\*' -Destination "$tempDir\img" -Recurse
+Copy-Item -Path 'data\*' -Destination "$tempDir\data" -Recurse
+
+# Crear ZIP
+Compress-Archive -Path "$tempDir\*" -DestinationPath $out -Force
+
+# Mostrar contenido del ZIP
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$zip = [System.IO.Compression.ZipFile]::OpenRead((Convert-Path $out))
+$zip.Entries.FullName | Sort-Object
+$zip.Dispose()
+
+# Mostrar ubicación del ZIP
+Write-Host "`nZIP creado en: $((Get-Item $out).FullName)"
+
+# Limpiar
+Remove-Item $tempDir -Recurse -Force
 
 # Salida esperada del portable
-L:\Magias\SpellBookWinForms_Clean\publish\Grimorio_de_Hechizos_v1.0.6.3_Portable.zip
+L:\Magias\SpellBookWinForms_Clean\publish\Grimorio_de_Hechizos_v1.0.6.4_Portable.zip
 
 4) Verificar que el instalador incluya los archivos nuevos
 - Comprueba que el paso de compresión lista imágenes de img/objetos y img/posiones.
