@@ -10,7 +10,8 @@
         { "tipo": "torso", "imagen": "Fire_Platet.png", "nombre": { "es": "Peto de fuego", "en": "Fire Plate" } },
         { "tipo": "legs", "imagen": "Fire_Poleynt.png", "nombre": { "es": "Pantalones de fuego", "en": "Fire Poleyns" } },
         { "tipo": "feet", "imagen": "Fire_Greavet.png", "nombre": { "es": "Grebas de fuego", "en": "Fire Greaves" } },
-        { "tipo": "shield", "imagen": "Shield_Of_Firet.png", "nombre": { "es": "Escudo de fuego", "en": "Shield of Fire" } }
+        { "tipo": "shield", "imagen": "Shield_Of_Firet.png", "nombre": { "es": "Escudo de fuego", "en": "Shield of Fire" } },
+        { "tipo": "weapon", "imagen": "Fury_(In_Hand).gif", "nombre": { "es": "Furia", "en": "Fury" } }
       ]
     },
     {
@@ -60,7 +61,8 @@
         { "tipo": "torso", "imagen": "Techplatet.png", "nombre": { "es": "Armadura tecnológica", "en": "Tech Armor" } },
         { "tipo": "legs", "imagen": "Techpoleynt.png", "nombre": { "es": "Pantalones tecnológicos", "en": "Tech Leggings" } },
         { "tipo": "feet", "imagen": "Techbootst.png", "nombre": { "es": "Botas tecnológicas", "en": "Tech Boots" } },
-        { "tipo": "shield", "imagen": "Techshieldt.png", "nombre": { "es": "Escudo tecnológico", "en": "Tech Shield" } }
+        { "tipo": "shield", "imagen": "Techshieldt.png", "nombre": { "es": "Escudo tecnológico", "en": "Tech Shield" } },
+        { "tipo": "weapon", "imagen": "Techmacet.png", "nombre": { "es": "Maza tecnológica", "en": "Techmace" } }
       ]
     }
   ]
