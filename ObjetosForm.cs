@@ -34,6 +34,7 @@ namespace SpellBookWinForms
         private readonly bool _en = string.Equals(Settings.Default.Idioma, "EN", StringComparison.OrdinalIgnoreCase);
 
         private List<Arma> _todas = new();
+        private List<SetArmadura> _sets = new();
 
         private sealed class TextoLocalizado
         {
@@ -83,16 +84,62 @@ namespace SpellBookWinForms
             [JsonPropertyName("armas")] public List<Arma> Armas { get; set; } = new();
         }
 
-        private sealed class ItemLista
+        private sealed class PiezaSet
         {
-            public Arma Valor { get; }
-            private readonly bool _en;
-            public ItemLista(Arma arma, bool en) { Valor = arma; _en = en; }
-            public override string ToString() => Valor.Nombre.Get(_en);
+            [JsonPropertyName("tipo")] public string Tipo { get; set; } = string.Empty;
+            [JsonPropertyName("imagen")] public string Imagen { get; set; } = string.Empty;
+            [JsonPropertyName("nombre")] public TextoLocalizado Nombre { get; set; } = new();
         }
 
-        public ObjetosForm()
+        private sealed class SetArmadura
         {
+            [JsonPropertyName("id")] public string Id { get; set; } = string.Empty;
+            [JsonPropertyName("nombre")] public TextoLocalizado Nombre { get; set; } = new();
+            [JsonPropertyName("tipo")] public TextoLocalizado Tipo { get; set; } = new();
+            [JsonPropertyName("imagen")] public string Imagen { get; set; } = string.Empty;
+            [JsonPropertyName("piezas")] public List<PiezaSet> Piezas { get; set; } = new();
+        }
+
+        private sealed class RaizSets
+        {
+            [JsonPropertyName("sets")] public List<SetArmadura> Sets { get; set; } = new();
+        }
+
+        private sealed class ItemLista
+        {
+            public object Valor { get; }
+            private readonly bool _en;
+            private readonly bool _esSet;
+
+            public ItemLista(Arma arma, bool en, bool esSet = false) 
+            { 
+                Valor = arma; 
+                _en = en; 
+                _esSet = esSet;
+            }
+
+            public ItemLista(SetArmadura set, bool en, bool esSet = true)
+            {
+                Valor = set;
+                _en = en;
+                _esSet = esSet;
+            }
+
+            public override string ToString()
+            {
+                if (_esSet && Valor is SetArmadura set)
+                    return $"[SET] {set.Nombre.Get(_en)}";
+                else if (Valor is Arma arma)
+                    return arma.Nombre.Get(_en);
+                return base.ToString();
+            }
+        }
+
+        private readonly bool _soloSets;
+
+        public ObjetosForm(bool soloSets = false)
+        {
+            _soloSets = soloSets;
             Text = _en ? "Weapons" : "Armas";
             StartPosition = FormStartPosition.CenterParent;
             Size = new Size(960, 640);
@@ -120,7 +167,9 @@ namespace SpellBookWinForms
                 Dock = DockStyle.None,
                 AutoSize = true,
                 Margin = new Padding(8, 6, 0, 0),
-                Text = _en ? "Sets only" : "Solo sets"
+                Text = _en ? "Sets only" : "Solo sets",
+                Checked = _soloSets,
+                Visible = !_soloSets  // Ocultar el checkbox si ya estamos en modo "solo sets"
             };
 
             lstObjetos = new ListBox { Dock = DockStyle.Fill };
@@ -239,14 +288,17 @@ namespace SpellBookWinForms
             lstObjetos.SelectedIndexChanged += (_, __) => MostrarSeleccion();
         }
 
-        private static bool EsSet(Arma arma)
+private static bool EsSet(Arma arma)
         {
-            if (arma == null || string.IsNullOrWhiteSpace(arma.Id)) return false;
-
-            return arma.Id.StartsWith("fire_", StringComparison.OrdinalIgnoreCase)
-                   || arma.Id.StartsWith("ra_sar_", StringComparison.OrdinalIgnoreCase)
-                   || arma.Id.StartsWith("mithral_", StringComparison.OrdinalIgnoreCase)
-                   || arma.Id.StartsWith("tech", StringComparison.OrdinalIgnoreCase);
+            if (arma == null) return false;
+            
+            // Verificar si el ID o el nombre contienen palabras clave de sets
+            string id = arma.Id?.ToLowerInvariant() ?? "";
+            string nombre = arma.Nombre?.Es?.ToLowerInvariant() ?? "";
+            
+            return id.Contains("fire_") || id.Contains("mithral_") || id.Contains("ra_sar_") || id.Contains("tech") ||
+                   nombre.Contains("fuego") || nombre.Contains("fire") || nombre.Contains("mithral") || 
+                   nombre.Contains("ra-sar") || nombre.Contains("ra_sar") || nombre.Contains("tech");
         }
 
         private static string? PrefijoSet(string id)
@@ -257,6 +309,10 @@ namespace SpellBookWinForms
             if (id.StartsWith("ra_sar_", StringComparison.OrdinalIgnoreCase)) return "ra_sar_";
             if (id.StartsWith("mithral_", StringComparison.OrdinalIgnoreCase)) return "mithral_";
             if (id.StartsWith("tech", StringComparison.OrdinalIgnoreCase)) return "tech";
+            if (id.Contains("plate", StringComparison.OrdinalIgnoreCase) || 
+                id.Contains("armet", StringComparison.OrdinalIgnoreCase) || 
+                id.Contains("torso", StringComparison.OrdinalIgnoreCase)) 
+                return "plate";
 
             return null;
         }
@@ -287,26 +343,50 @@ namespace SpellBookWinForms
         {
             try
             {
-                var ruta = Path.Combine(AppContext.BaseDirectory, "data", "objetos_armas.json");
-                if (!File.Exists(ruta))
+                // Cargar armas
+                var rutaArmas = Path.Combine(AppContext.BaseDirectory, "data", "objetos_armas.json");
+                if (!File.Exists(rutaArmas))
                 {
                     var rutaAlt = Path.Combine(Directory.GetCurrentDirectory(), "data", "objetos_armas.json");
-                    if (File.Exists(rutaAlt)) ruta = rutaAlt; else throw new FileNotFoundException(ruta);
+                    if (File.Exists(rutaAlt)) rutaArmas = rutaAlt; else throw new FileNotFoundException(rutaArmas);
                 }
 
-                using var fs = File.OpenRead(ruta);
-                var raiz = JsonSerializer.Deserialize<RaizArmas>(fs, new JsonSerializerOptions
+                using (var fs = File.OpenRead(rutaArmas))
                 {
-                    ReadCommentHandling = JsonCommentHandling.Skip,
-                    AllowTrailingCommas = true,
-                    PropertyNameCaseInsensitive = true
-                });
+                    var raiz = JsonSerializer.Deserialize<RaizArmas>(fs, new JsonSerializerOptions
+                    {
+                        ReadCommentHandling = JsonCommentHandling.Skip,
+                        AllowTrailingCommas = true,
+                        PropertyNameCaseInsensitive = true
+                    });
+                    _todas = raiz?.Armas ?? new List<Arma>();
+                }
 
-                _todas = raiz?.Armas ?? new List<Arma>();
+                // Cargar sets
+                var rutaSets = Path.Combine(AppContext.BaseDirectory, "data", "objetos_sets.json");
+                if (!File.Exists(rutaSets))
+                {
+                    var rutaAlt = Path.Combine(Directory.GetCurrentDirectory(), "data", "objetos_sets.json");
+                    if (File.Exists(rutaAlt)) rutaSets = rutaAlt;
+                }
 
+                if (File.Exists(rutaSets))
+                {
+                    using var fsSets = File.OpenRead(rutaSets);
+                    var raizSets = JsonSerializer.Deserialize<RaizSets>(fsSets, new JsonSerializerOptions
+                    {
+                        ReadCommentHandling = JsonCommentHandling.Skip,
+                        AllowTrailingCommas = true,
+                        PropertyNameCaseInsensitive = true
+                    });
+                    _sets = raizSets?.Sets ?? new List<SetArmadura>();
+                }
+
+                // Actualizar lista de tipos
                 var tipos = _todas
                     .Select(a => a.Tipo.Get(_en))
                     .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Concat(_sets.Select(s => s.Tipo.Get(_en)))
                     .Distinct()
                     .OrderBy(s => s)
                     .ToList();
@@ -320,7 +400,7 @@ namespace SpellBookWinForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show((_en ? "Error loading weapons: " : "Error cargando armas: ") + ex.Message,
+                MessageBox.Show((_en ? "Error loading data: " : "Error cargando datos: ") + ex.Message,
                     Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -330,89 +410,105 @@ namespace SpellBookWinForms
             var filtroTxt = (txtBuscar.Text ?? string.Empty).Trim().ToLowerInvariant();
             var filtroTipo = cbTipo.SelectedItem?.ToString();
             bool todos = string.IsNullOrWhiteSpace(filtroTipo) || filtroTipo == (_en ? "All" : "Todos");
-            bool soloSets = chkSoloSets.Checked;
+            bool mostrarSoloSets = _soloSets || chkSoloSets.Checked;
 
-            var lista = _todas
+            // Filtrar armas normales
+            var listaArmas = _todas
                 .Where(a => todos || string.Equals(a.Tipo.Get(_en), filtroTipo, StringComparison.OrdinalIgnoreCase))
-                .Where(a => !soloSets || EsSet(a))
+                .Where(a => !mostrarSoloSets)  // Solo mostrar armas si no estamos en modo solo sets
                 .Where(a => string.IsNullOrWhiteSpace(filtroTxt) || a.Nombre.Get(_en).ToLowerInvariant().Contains(filtroTxt))
-                .OrderBy(a => a.Nombre.Get(_en))
-                .ToList();
+                .Select(a => new ItemLista(a, _en, false));
+
+            // Filtrar sets
+            var listaSets = _sets
+                .Where(s => mostrarSoloSets)  // Solo mostrar sets si estamos en modo solo sets
+                .Where(s => todos || string.Equals(s.Tipo.Get(_en), filtroTipo, StringComparison.OrdinalIgnoreCase))
+                .Where(s => string.IsNullOrWhiteSpace(filtroTxt) || s.Nombre.Get(_en).ToLowerInvariant().Contains(filtroTxt))
+                .Select(s => new ItemLista(s, _en, true));
+
+            // Combinar y ordenar
+            var lista = listaArmas.Concat(listaSets)
+                                .OrderBy(i => i.ToString())
+                                .ToList();
 
             lstObjetos.BeginUpdate();
             lstObjetos.Items.Clear();
-            foreach (var a in lista)
-            {
-                lstObjetos.Items.Add(new ItemLista(a, _en));
-            }
+            foreach (var item in lista)
+                lstObjetos.Items.Add(item);
             lstObjetos.EndUpdate();
             if (lstObjetos.Items.Count > 0) lstObjetos.SelectedIndex = 0;
         }
 
         private void MostrarSeleccion()
         {
-            if (lstObjetos.SelectedItem is not ItemLista it) return;
-            var a = it.Valor;
+            if (lstObjetos.SelectedItem is not ItemLista item) return;
 
-            lblNombre.Text = a.Nombre.Get(_en);
-            lblTipo.Text = ($"{(_en ? "Type" : "Tipo")}: " + a.Tipo.Get(_en)).Trim();
+            // Limpiar controles
+            Imagenes.ReemplazarImagen(picObjeto, null);
+            lblStats.Text = string.Empty;
+            lblEfecto.Text = string.Empty;
 
-            bool mostrarSet = chkSoloSets.Checked && EsSet(a);
+            // Limpiar imágenes del set
+            Imagenes.ReemplazarImagen(pbSetHead, null);
+            Imagenes.ReemplazarImagen(pbSetTorso, null);
+            Imagenes.ReemplazarImagen(pbSetLegs, null);
+            Imagenes.ReemplazarImagen(pbSetFeet, null);
+            Imagenes.ReemplazarImagen(pbSetLeft, null);
+            Imagenes.ReemplazarImagen(pbSetRight, null);
 
-            picObjeto.Visible = !mostrarSet;
-            panelSet.Visible = mostrarSet;
-            LimpiarPictureBoxSet();
-
-            if (mostrarSet)
+            if (item.Valor is Arma a)
             {
-                var prefijo = PrefijoSet(a.Id);
-                if (!string.IsNullOrEmpty(prefijo))
-                {
-                    var miembros = _todas
-                        .Where(x => x.Id.StartsWith(prefijo, StringComparison.OrdinalIgnoreCase))
-                        .OrderBy(x => x.Nombre.Get(_en))
-                        .ToList();
+                // Mostrar arma normal
+                lblNombre.Text = a.Nombre.Get(_en);
+                lblTipo.Text = a.Tipo.Get(_en);
+                CargarImagen(a.Imagen);
+                panelSet.Visible = false;
 
-                    foreach (var m in miembros)
+                // Mostrar estadísticas del arma
+                MostrarEstadisticasArma(a);
+            }
+            else if (item.Valor is SetArmadura set)
+            {
+                // Mostrar set de armadura
+                lblNombre.Text = set.Nombre.Get(_en);
+                lblTipo.Text = set.Tipo.Get(_en);
+                CargarImagen(set.Imagen);
+                panelSet.Visible = true;
+
+                // Mostrar piezas del set
+                foreach (var pieza in set.Piezas)
+                {
+                    switch (pieza.Tipo.ToLowerInvariant())
                     {
-                        // Casco
-                        if (EsParteNombre(m.Id, "helm", "helmet"))
-                        {
-                            CargarImagenEn(pbSetHead, m.Imagen);
-                        }
-                        // Escudo
-                        else if (EsParteNombre(m.Id, "shield"))
-                        {
-                            CargarImagenEn(pbSetLeft, m.Imagen);
-                        }
-                        // Botas / pies
-                        else if (EsParteNombre(m.Id, "boot", "foot", "feet"))
-                        {
-                            CargarImagenEn(pbSetFeet, m.Imagen);
-                        }
-                        // Piernas / muslos
-                        else if (EsParteNombre(m.Id, "greave", "poleyn", "hosen", "leg", "thigh"))
-                        {
-                            CargarImagenEn(pbSetLegs, m.Imagen);
-                        }
-                        // Torso
-                        else if (EsParteNombre(m.Id, "plate", "mail", "hauberk", "jerkin", "brigand", "armor"))
-                        {
-                            CargarImagenEn(pbSetTorso, m.Imagen);
-                        }
-                        // Resto (arma u otro)
-                        else
-                        {
-                            CargarImagenEn(pbSetRight, m.Imagen);
-                        }
+                        case "head":
+                            CargarImagenEn(pbSetHead, pieza.Imagen);
+                            break;
+                        case "torso":
+                            CargarImagenEn(pbSetTorso, pieza.Imagen);
+                            break;
+                        case "legs":
+                            CargarImagenEn(pbSetLegs, pieza.Imagen);
+                            break;
+                        case "feet":
+                            CargarImagenEn(pbSetFeet, pieza.Imagen);
+                            break;
+                        case "shield":
+                            CargarImagenEn(pbSetLeft, pieza.Imagen);
+                            break;
+                        default:
+                            CargarImagenEn(pbSetRight, pieza.Imagen);
+                            break;
                     }
                 }
-            }
-            else
-            {
-                CargarImagen(a.Imagen);
-            }
 
+                // Mostrar lista de piezas en el efecto
+                var piezas = string.Join(", ", set.Piezas.Select(p => p.Nombre.Get(_en)));
+                lblEfecto.Text = $"{(_en ? "Includes" : "Incluye")}: {piezas}";
+            }
+        }
+
+        private void MostrarEstadisticasArma(Arma a)
+        {
             string pesoLabel = _en ? "Weight" : "Peso";
             string valorLabel = _en ? "Value" : "Valor";
             string danioAtkLabel = _en ? "Attack" : "Daño ataque";

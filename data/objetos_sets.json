@@ -1,0 +1,67 @@
+{
+  "sets": [
+    {
+      "id": "fire_set",
+      "nombre": { "es": "Armadura de fuego", "en": "Fire Armor" },
+      "tipo": { "es": "Set de Armadura", "en": "Armor Set" },
+      "imagen": "set_fuego.png",
+      "piezas": [
+        { "tipo": "head", "imagen": "Fire_Helmt.png", "nombre": { "es": "Casco de fuego", "en": "Fire Helmet" } },
+        { "tipo": "torso", "imagen": "Fire_Platet.png", "nombre": { "es": "Peto de fuego", "en": "Fire Plate" } },
+        { "tipo": "legs", "imagen": "Fire_Poleynt.png", "nombre": { "es": "Pantalones de fuego", "en": "Fire Poleyns" } },
+        { "tipo": "feet", "imagen": "Fire_Greavet.png", "nombre": { "es": "Grebas de fuego", "en": "Fire Greaves" } },
+        { "tipo": "shield", "imagen": "Shield_Of_Firet.png", "nombre": { "es": "Escudo de fuego", "en": "Shield of Fire" } }
+      ]
+    },
+    {
+      "id": "mithral_set",
+      "nombre": { "es": "Armadura de mithral", "en": "Mithral Armor" },
+      "tipo": { "es": "Set de Armadura", "en": "Armor Set" },
+      "imagen": "set_mithral.png",
+      "piezas": [
+        { "tipo": "head", "imagen": "Mail_Helmett.png", "nombre": { "es": "Yelmo de mithral", "en": "Mithral Huke" } },
+        { "tipo": "torso", "imagen": "Mithral_Mailt.png", "nombre": { "es": "Cota de mithral", "en": "Mithral Mail" } },
+        { "tipo": "legs", "imagen": "Mithral_Huket.png", "nombre": { "es": "Pantalones de mithral", "en": "Mithral Hosen" } },
+        { "tipo": "feet", "imagen": "Mithral_Hosent.png", "nombre": { "es": "Botas de mithral", "en": "Mithral Hosen" } }
+      ]
+    },
+    {
+      "id": "plate_set",
+      "nombre": { "es": "Armadura de placas", "en": "Plate Armor" },
+      "tipo": { "es": "Set de Armadura", "en": "Armor Set" },
+      "imagen": "set_plate.png",
+      "piezas": [
+        { "tipo": "head", "imagen": "Armett.png", "nombre": { "es": "Yelmo de placas", "en": "Armett" } },
+        { "tipo": "torso", "imagen": "Torso_Platet.png", "nombre": { "es": "Peto de placas", "en": "Torso Plate" } },
+        { "tipo": "legs", "imagen": "Leg_Platet.png", "nombre": { "es": "Pantalones de placas", "en": "Leg Plates" } },
+        { "tipo": "feet", "imagen": "Foot_Platet.png", "nombre": { "es": "Botas de placas", "en": "Foot Plates" } }
+      ]
+    },
+    {
+      "id": "ra_sar_set",
+      "nombre": { "es": "Armadura Ra-Sar", "en": "Ra-Sar Armor" },
+      "tipo": { "es": "Set de Armadura", "en": "Armor Set" },
+      "imagen": "set_rasar.png",
+      "piezas": [
+        { "tipo": "head", "imagen": "Ra_Sar_Helmt.png", "nombre": { "es": "Yelmo Ra-Sar", "en": "Ra-Sar Helmet" } },
+        { "tipo": "torso", "imagen": "Ra_Sar_Platet.png", "nombre": { "es": "Peto Ra-Sar", "en": "Ra-Sar Plate" } },
+        { "tipo": "legs", "imagen": "Ra_Sar_Poleynt.png", "nombre": { "es": "Pantalones Ra-Sar", "en": "Ra-Sar Poleyns" } },
+        { "tipo": "feet", "imagen": "Ra_Sar_Greavet.png", "nombre": { "es": "Grebas Ra-Sar", "en": "Ra-Sar Greaves" } },
+        { "tipo": "shield", "imagen": "Ra_Sar_Shieldt.png", "nombre": { "es": "Escudo Ra-Sar", "en": "Ra-Sar Shield" } }
+      ]
+    },
+    {
+      "id": "tech_set",
+      "nombre": { "es": "Equipo tecnológico", "en": "Tech Equipment" },
+      "tipo": { "es": "Set de Equipo", "en": "Equipment Set" },
+      "imagen": "set_tecnolo.png",
+      "piezas": [
+        { "tipo": "head", "imagen": "Techelmt.png", "nombre": { "es": "Casco tecnológico", "en": "Tech Helmet" } },
+        { "tipo": "torso", "imagen": "Techplatet.png", "nombre": { "es": "Armadura tecnológica", "en": "Tech Armor" } },
+        { "tipo": "legs", "imagen": "Techpoleynt.png", "nombre": { "es": "Pantalones tecnológicos", "en": "Tech Leggings" } },
+        { "tipo": "feet", "imagen": "Techbootst.png", "nombre": { "es": "Botas tecnológicas", "en": "Tech Boots" } },
+        { "tipo": "shield", "imagen": "Techshieldt.png", "nombre": { "es": "Escudo tecnológico", "en": "Tech Shield" } }
+      ]
+    }
+  ]
+}
