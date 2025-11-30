@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows.Forms;
@@ -18,7 +19,6 @@ namespace SpellBookWinForms
         private ListBox lstObjetos = null!;
         private PictureBox picObjeto = null!;
         private Panel panelSet = null!;
-        private TableLayoutPanel tablaSet = null!;
         private PictureBox pbSetHead = null!;
         private PictureBox pbSetTorso = null!;
         private PictureBox pbSetLegs = null!;
@@ -30,6 +30,19 @@ namespace SpellBookWinForms
         private Label lblStats = null!;
         private Label lblEfecto = null!;
         private Button btnCerrar = null!;
+
+        // Soporte para arrastrar las piezas del set
+        private PictureBox? _draggingSetPb;
+        private Point _dragStartMouse;
+        private Point _dragStartControl;
+        private bool _draggingSet;
+        private readonly List<PictureBox> _setExtras = new();
+
+        // Panel de botones relacionados con sets (Añadir extra, coords, JSON)
+        private FlowLayoutPanel panelBotonesSet = null!;
+
+        // Último set mostrado, para generar JSON
+        private SetArmadura? _setActual;
 
         private readonly bool _en = string.Equals(Settings.Default.Idioma, "EN", StringComparison.OrdinalIgnoreCase);
 
@@ -53,9 +66,19 @@ namespace SpellBookWinForms
                     return;
                 }
 
-                var baseDir = Path.Combine(Imagenes.BaseImgPath(), "objetos", "Armas");
+                var baseDirArmas = Path.Combine(Imagenes.BaseImgPath(), "objetos", "Armas");
                 string[] extensiones = { ".png", ".gif", ".jpg", ".jpeg", ".bmp" };
-                string? ruta = Imagenes.BuscarImagen(baseDir, nombreArchivo, extensiones);
+
+                // Buscar primero en la carpeta de armas
+                string? ruta = Imagenes.BuscarImagen(baseDirArmas, nombreArchivo, extensiones);
+
+                // Si no se encuentra, probar también en collares (para extras de los sets)
+                if (ruta == null)
+                {
+                    var baseDirCollares = Path.Combine(Imagenes.BaseImgPath(), "objetos", "collares");
+                    ruta = Imagenes.BuscarImagen(baseDirCollares, nombreArchivo, extensiones);
+                }
+
                 var img = ruta != null ? Imagenes.CargarImagenSegura(ruta) : null;
                 Imagenes.ReemplazarImagen(destino, img);
             }
@@ -227,38 +250,53 @@ namespace SpellBookWinForms
             pbSetLeft = CrearPictureBoxSet();
             pbSetRight = CrearPictureBoxSet();
 
-            tablaSet = new TableLayoutPanel
-            {
-                ColumnCount = 3,
-                RowCount = 4,
-                AutoSize = true,
-                Margin = new Padding(0, 4, 0, 4)
-            };
+            ConfigurarDragSet(pbSetHead, "head");
+            ConfigurarDragSet(pbSetTorso, "torso");
+            ConfigurarDragSet(pbSetLegs, "legs");
+            ConfigurarDragSet(pbSetFeet, "feet");
+            ConfigurarDragSet(pbSetLeft, "shield");
+            ConfigurarDragSet(pbSetRight, "weapon");
 
-            tablaSet.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            tablaSet.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            tablaSet.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            tablaSet.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tablaSet.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tablaSet.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tablaSet.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-            // Disposición: fila 0 centro = cabeza, fila 1: izquierda escudo, centro torso, derecha arma,
-            // fila 2 centro = piernas, fila 3 centro = pies
-            tablaSet.Controls.Add(pbSetHead, 1, 0);
-            tablaSet.Controls.Add(pbSetLeft, 0, 1);
-            tablaSet.Controls.Add(pbSetTorso, 1, 1);
-            tablaSet.Controls.Add(pbSetRight, 2, 1);
-            tablaSet.Controls.Add(pbSetLegs, 1, 2);
-            tablaSet.Controls.Add(pbSetFeet, 1, 3);
-
+            // Hacemos el panel bastante más grande que la imagen original (103x113)
+            // para que las piezas de 96x96 tengan espacio suficiente y se vean claras.
             panelSet = new Panel
             {
-                AutoSize = true,
+                Width = 320,
+                Height = 360,
+                Margin = new Padding(0, 4, 0, 4),
                 Visible = false
             };
 
-            panelSet.Controls.Add(tablaSet);
+            try
+            {
+                var fondoInv = Path.Combine(Imagenes.BaseImgPath(), "inven.png");
+                if (File.Exists(fondoInv))
+                {
+                    panelSet.BackgroundImage = Imagenes.CargarImagenSegura(fondoInv);
+                    panelSet.BackgroundImageLayout = ImageLayout.Stretch;
+                }
+            }
+            catch
+            {
+                // Si falla la carga del fondo, simplemente se deja sin imagen
+            }
+
+            // Posiciones fijas del personaje sobre el inventario, ajustadas por el usuario
+            // Valores tomados del botón "Ver coordenadas"
+            pbSetHead.Location = new Point(106, 93);
+            pbSetTorso.Location = new Point(102, 156);
+            pbSetLegs.Location = new Point(104, 212);
+            pbSetFeet.Location = new Point(103, 286);
+
+            pbSetLeft.Location = new Point(15, 172);   // Escudo
+            pbSetRight.Location = new Point(183, 173); // Arma
+
+            panelSet.Controls.Add(pbSetHead);
+            panelSet.Controls.Add(pbSetTorso);
+            panelSet.Controls.Add(pbSetLegs);
+            panelSet.Controls.Add(pbSetFeet);
+            panelSet.Controls.Add(pbSetLeft);
+            panelSet.Controls.Add(pbSetRight);
             lblStats = new Label { AutoSize = true, Font = new Font("Segoe UI", 9), MaximumSize = new Size(560, 0) };
             lblEfecto = new Label { AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Italic), MaximumSize = new Size(560, 0) };
 
@@ -273,6 +311,54 @@ namespace SpellBookWinForms
             stackDerecha.Controls.Add(lblTipo);
             stackDerecha.Controls.Add(picObjeto);
             stackDerecha.Controls.Add(panelSet);
+
+            var btnAddExtra = new Button
+            {
+                Text = _en ? "Add extra" : "Añadir extra",
+                AutoSize = true,
+                Margin = new Padding(0, 4, 8, 4)
+            };
+            btnAddExtra.Click += (_, __) => CrearExtraVisual();
+
+            var btnCoords = new Button
+            {
+                Text = _en ? "Show coords" : "Ver coordenadas",
+                AutoSize = true,
+                Margin = new Padding(0, 4, 0, 4)
+            };
+            btnCoords.Click += (_, __) => MostrarCoordenadasSet();
+
+            var btnJson = new Button
+            {
+                Text = _en ? "Generate JSON" : "Generar JSON",
+                AutoSize = true,
+                Margin = new Padding(0, 4, 0, 4)
+            };
+            btnJson.Click += (_, __) => GenerarJsonSet();
+
+            var btnNuevoSet = new Button
+            {
+                Text = _en ? "New set" : "Nuevo set",
+                AutoSize = true,
+                Margin = new Padding(0, 4, 0, 4)
+            };
+            btnNuevoSet.Click += (_, __) =>
+            {
+                using var f = new NuevoSetForm();
+                f.ShowDialog(this);
+            };
+            panelBotonesSet = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.LeftToRight,
+                AutoSize = true,
+                Visible = false
+            };
+            panelBotonesSet.Controls.Add(btnAddExtra);
+            panelBotonesSet.Controls.Add(btnCoords);
+            panelBotonesSet.Controls.Add(btnJson);
+            panelBotonesSet.Controls.Add(btnNuevoSet);
+
+            stackDerecha.Controls.Add(panelBotonesSet);
             stackDerecha.Controls.Add(lblStats);
             stackDerecha.Controls.Add(lblEfecto);
 
@@ -281,10 +367,20 @@ namespace SpellBookWinForms
             Controls.Add(panelDerecho);
             Controls.Add(panelIzquierdo);
 
-            Load += (_, __) => CargarDatos();
+            Load += (_, __) =>
+            {
+                CargarDatos();
+                // Si este formulario ya viene en modo solo sets, mostrar botones de set
+                panelBotonesSet.Visible = _soloSets || chkSoloSets.Checked;
+            };
             txtBuscar.TextChanged += (_, __) => RefrescarLista();
             cbTipo.SelectedIndexChanged += (_, __) => RefrescarLista();
-            chkSoloSets.CheckedChanged += (_, __) => RefrescarLista();
+            chkSoloSets.CheckedChanged += (_, __) =>
+            {
+                RefrescarLista();
+                // Solo mostrar los botones de set cuando estamos en modo solo sets
+                panelBotonesSet.Visible = _soloSets || chkSoloSets.Checked;
+            };
             lstObjetos.SelectedIndexChanged += (_, __) => MostrarSeleccion();
         }
 
@@ -329,14 +425,23 @@ private static bool EsSet(Arma arma)
 
         private PictureBox CrearPictureBoxSet()
         {
+            // Tamaño ajustado para que las piezas encajen mejor en las casillas del inventario
             return new PictureBox
             {
                 SizeMode = PictureBoxSizeMode.Zoom,
-                Width = 64,
-                Height = 64,
+                Width = 56,
+                Height = 56,
                 BorderStyle = BorderStyle.FixedSingle,
                 Margin = new Padding(2)
             };
+        }
+
+        private void ConfigurarDragSet(PictureBox pb, string nombre)
+        {
+            pb.Tag = nombre;
+            pb.MouseDown += PbSet_MouseDown;
+            pb.MouseMove += PbSet_MouseMove;
+            pb.MouseUp += PbSet_MouseUp;
         }
 
         private void CargarDatos()
@@ -463,6 +568,7 @@ private static bool EsSet(Arma arma)
                 lblTipo.Text = a.Tipo.Get(_en);
                 CargarImagen(a.Imagen);
                 panelSet.Visible = false;
+                panelBotonesSet.Visible = false;
 
                 // Mostrar estadísticas del arma
                 MostrarEstadisticasArma(a);
@@ -474,6 +580,43 @@ private static bool EsSet(Arma arma)
                 lblTipo.Text = set.Tipo.Get(_en);
                 CargarImagen(set.Imagen);
                 panelSet.Visible = true;
+                // Solo mostrar los botones de set cuando estamos viendo sets
+                panelBotonesSet.Visible = _soloSets || chkSoloSets.Checked;
+
+                // Recordar el set actual para generar JSON
+                _setActual = set;
+
+                // Asegurar que existen hasta 4 extras en sus posiciones fijas
+                while (_setExtras.Count < 4)
+                {
+                    var pbExtra = CrearPictureBoxSet();
+                    // Estos extras son automáticos para representar las posiciones fijas;
+                    // no les ponemos una etiqueta específica para que en el log salgan como extra1, extra2, etc.
+                    ConfigurarDragSet(pbExtra, string.Empty);
+                    pbExtra.Tag = null;
+
+                    int x;
+                    int y;
+                    switch (_setExtras.Count)
+                    {
+                        case 0: // extra1
+                            x = 15;  y = 112; break;
+                        case 1: // extra2
+                            x = 192; y = 241; break;
+                        case 2: // extra3
+                            x = 17;  y = 240; break;
+                        case 3: // extra4
+                            x = 201; y = 113; break;
+                        default:
+                            x = panelSet.Width - pbExtra.Width - 8;
+                            y = panelSet.Height - pbExtra.Height - 8;
+                            break;
+                    }
+
+                    pbExtra.Location = new Point(x, y);
+                    panelSet.Controls.Add(pbExtra);
+                    _setExtras.Add(pbExtra);
+                }
 
                 // Mostrar piezas del set
                 foreach (var pieza in set.Piezas)
@@ -494,6 +637,38 @@ private static bool EsSet(Arma arma)
                             break;
                         case "shield":
                             CargarImagenEn(pbSetLeft, pieza.Imagen);
+                            break;
+                        case "amulet":
+                            // Collar del Clan en la posición extra1 (15,112)
+                            if (_setExtras.Count >= 1)
+                            {
+                                _setExtras[0].Tag = Path.GetFileNameWithoutExtension(pieza.Imagen) ?? "extra1";
+                                CargarImagenEn(_setExtras[0], pieza.Imagen);
+                            }
+                            break;
+                        case "arrows":
+                            // Quiver en la posición extra2 (192,241)
+                            if (_setExtras.Count >= 2)
+                            {
+                                _setExtras[1].Tag = Path.GetFileNameWithoutExtension(pieza.Imagen) ?? "extra2";
+                                CargarImagenEn(_setExtras[1], pieza.Imagen);
+                            }
+                            break;
+                        case "ring":
+                            // Scarab en la posición extra3 (17,240)
+                            if (_setExtras.Count >= 3)
+                            {
+                                _setExtras[2].Tag = Path.GetFileNameWithoutExtension(pieza.Imagen) ?? "extra3";
+                                CargarImagenEn(_setExtras[2], pieza.Imagen);
+                            }
+                            break;
+                        case "necklace":
+                            // Baúl en la posición extra4 (201,113)
+                            if (_setExtras.Count >= 4)
+                            {
+                                _setExtras[3].Tag = Path.GetFileNameWithoutExtension(pieza.Imagen) ?? "extra4";
+                                CargarImagenEn(_setExtras[3], pieza.Imagen);
+                            }
                             break;
                         default:
                             CargarImagenEn(pbSetRight, pieza.Imagen);
@@ -557,6 +732,175 @@ private static bool EsSet(Arma arma)
             CargarImagenEn(pbSetFeet, string.Empty);
             CargarImagenEn(pbSetLeft, string.Empty);
             CargarImagenEn(pbSetRight, string.Empty);
+        }
+
+        // Manejadores de arrastre para las piezas del set
+        private void PbSet_MouseDown(object? sender, MouseEventArgs e)
+        {
+            if (sender is not PictureBox pb || e.Button != MouseButtons.Left) return;
+            _draggingSetPb = pb;
+            _dragStartMouse = e.Location;
+            _dragStartControl = pb.Location;
+            _draggingSet = true;
+        }
+
+        private void PbSet_MouseMove(object? sender, MouseEventArgs e)
+        {
+            if (!_draggingSet || _draggingSetPb == null) return;
+
+            var dx = e.X - _dragStartMouse.X;
+            var dy = e.Y - _dragStartMouse.Y;
+            var nueva = new Point(_dragStartControl.X + dx, _dragStartControl.Y + dy);
+
+            // Limitar dentro del panel
+            if (_draggingSetPb.Parent is Panel p)
+            {
+                int maxX = Math.Max(0, p.Width - _draggingSetPb.Width);
+                int maxY = Math.Max(0, p.Height - _draggingSetPb.Height);
+                nueva.X = Math.Min(Math.Max(0, nueva.X), maxX);
+                nueva.Y = Math.Min(Math.Max(0, nueva.Y), maxY);
+            }
+
+            _draggingSetPb.Location = nueva;
+        }
+
+        private void PbSet_MouseUp(object? sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left) return;
+            _draggingSet = false;
+            _draggingSetPb = null;
+        }
+
+        private void MostrarCoordenadasSet()
+        {
+            var sb = new StringBuilder();
+            void Add(string nombre, PictureBox pb)
+            {
+                string etiqueta = pb.Tag as string ?? nombre;
+                sb.AppendLine($"{etiqueta}: X={pb.Location.X}, Y={pb.Location.Y}");
+            }
+
+            Add("head", pbSetHead);
+            Add("torso", pbSetTorso);
+            Add("legs", pbSetLegs);
+            Add("feet", pbSetFeet);
+            Add("shield", pbSetLeft);
+            Add("weapon", pbSetRight);
+
+            if (_setExtras.Count > 0)
+            {
+                for (int i = 0; i < _setExtras.Count; i++)
+                {
+                    var extra = _setExtras[i];
+                    Add($"extra{i + 1}", extra);
+                }
+            }
+
+            MessageBox.Show(sb.ToString(), _en ? "Set coords" : "Coordenadas del set",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void GenerarJsonSet()
+        {
+            if (_setActual == null)
+            {
+                MessageBox.Show(_en ? "No set selected" : "No hay set seleccionado",
+                    Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendLine("\"piezas\": [");
+
+            // Usamos las piezas ya definidas en el JSON (_setActual.Piezas)
+            for (int i = 0; i < _setActual.Piezas.Count; i++)
+            {
+                var p = _setActual.Piezas[i];
+                string coma = i < _setActual.Piezas.Count - 1 ? "," : string.Empty;
+
+                sb.AppendLine(
+                    $"  {{ \"tipo\": \"{p.Tipo}\", \"imagen\": \"{p.Imagen}\", \"nombre\": {{ \"es\": \"{p.Nombre.Es}\", \"en\": \"{p.Nombre.En}\" }} }}{coma}");
+            }
+
+            sb.AppendLine("]");
+
+            using var dlg = new Form
+            {
+                Text = _en ? "Generated JSON" : "JSON generado",
+                StartPosition = FormStartPosition.CenterParent,
+                Size = new Size(600, 400)
+            };
+
+            var txt = new TextBox
+            {
+                Multiline = true,
+                ReadOnly = true,
+                ScrollBars = ScrollBars.Both,
+                Dock = DockStyle.Fill,
+                Font = new Font("Consolas", 10f),
+                Text = sb.ToString()
+            };
+
+            dlg.Controls.Add(txt);
+            dlg.ShowDialog(this);
+        }
+
+        private void CrearExtraVisual()
+        {
+            // Permitir al usuario elegir la imagen del extra desde la carpeta img
+            using var dlg = new OpenFileDialog
+            {
+                Title = _en ? "Select extra image" : "Selecciona imagen para el extra",
+                Filter = "Imagenes|*.png;*.gif;*.jpg;*.jpeg;*.bmp",
+                InitialDirectory = Imagenes.BaseImgPath()
+            };
+
+            if (dlg.ShowDialog(this) != DialogResult.OK)
+            {
+                return; // No se crea el extra si no se elige imagen
+            }
+
+            var pb = CrearPictureBoxSet();
+            string nombreBase = Path.GetFileNameWithoutExtension(dlg.FileName) ?? $"extra{_setExtras.Count + 1}";
+            ConfigurarDragSet(pb, nombreBase);
+
+            try
+            {
+                var img = Imagenes.CargarImagenSegura(dlg.FileName);
+                Imagenes.ReemplazarImagen(pb, img);
+            }
+            catch
+            {
+                // Si falla la carga, no añadimos el extra
+                return;
+            }
+
+            int x;
+            int y;
+
+            // Posiciones fijas para los primeros extras según tus ajustes actuales:
+            // extra1: amuleto/collar, extra2/3/4 otras piezas del set.
+            switch (_setExtras.Count)
+            {
+                case 0: // extra1
+                    x = 15;  y = 112; break;
+                case 1: // extra2
+                    x = 192; y = 241; break;
+                case 2: // extra3
+                    x = 17;  y = 240; break;
+                case 3: // extra4
+                    x = 201; y = 113; break;
+                default:
+                    // Resto de extras: esquina inferior derecha del inventario
+                    x = panelSet.Width - pb.Width - 8;
+                    y = panelSet.Height - pb.Height - 8;
+                    break;
+            }
+
+            pb.Location = new Point(x, y);
+
+            panelSet.Controls.Add(pb);
+            _setExtras.Add(pb);
         }
     }
 }

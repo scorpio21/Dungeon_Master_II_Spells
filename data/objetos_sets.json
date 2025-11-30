@@ -11,7 +11,11 @@
         { "tipo": "legs", "imagen": "Fire_Poleynt.png", "nombre": { "es": "Pantalones de fuego", "en": "Fire Poleyns" } },
         { "tipo": "feet", "imagen": "Fire_Greavet.png", "nombre": { "es": "Grebas de fuego", "en": "Fire Greaves" } },
         { "tipo": "shield", "imagen": "Shield_Of_Firet.png", "nombre": { "es": "Escudo de fuego", "en": "Shield of Fire" } },
-        { "tipo": "weapon", "imagen": "Fury_(In_Hand).gif", "nombre": { "es": "Furia", "en": "Fury" } }
+        { "tipo": "weapon", "imagen": "Fury_(In_Hand).gif", "nombre": { "es": "Furia", "en": "Fury" } },
+        { "tipo": "amulet",   "imagen": "Clan_Chief_Gem.png",   "nombre": { "es": "Collar del Clan",   "en": "Clan Chief" } },
+        { "tipo": "necklace", "imagen": "Chest_(Opened).png", "nombre": { "es": "Baul",    "en": "Chest" } },
+        { "tipo": "ring",     "imagen": "Scarab.png",     "nombre": { "es": "Escarabajo",    "en": "Scarab" } },
+        { "tipo": "arrows",   "imagen": "Quiver.png",   "nombre": { "es": "Cartuchera Flecha",    "en": "Arrow Quiver" } }
       ]
     },
     {
