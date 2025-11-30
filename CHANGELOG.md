@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.7] - 2025-11-30
+
+### Añadido
+
+- Panel de inventario para **sets de armadura** con fondo `img/inven.png` y colocación precisa de casco, torso, piernas, botas, escudo y arma.
+- Soporte para **piezas extra** de set (`amulet`, `ring`, `necklace`, `arrows`) con imágenes en `img/objetos/collares/` y mapeo a posiciones fijas.
+- Botones específicos de sets en el formulario **Objetos**: `Añadir extra`, `Ver coordenadas` y `Generar JSON`, visibles solo cuando está activo el modo "Solo sets".
+- Función de **drag & drop** para mover piezas del set y extras sobre el inventario, con botón para mostrar las coordenadas exactas.
+- Nuevo formulario **`NuevoSetForm`** para definir un set completo (datos generales, piezas básicas y extras) y generar un bloque JSON listo para pegar en `data/objetos_sets.json`.
+- Menú de ayuda (ES/EN) en `NuevoSetForm` con guía rápida para crear y registrar nuevos sets.
+
+### Instalador
+
+- Actualización prevista de `installer.iss` a versión 1.0.7 para incluir el nuevo fondo `img/inven.png` y las imágenes de `img/objetos/collares/` en Setup y versión portable.
+
 ## [1.0.6.4] - 2025-11-15
 
 ### Añadido

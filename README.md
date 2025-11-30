@@ -1,4 +1,4 @@
-# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.6.4
+# Grimorio de Hechizos – Dungeon Master II (WinForms) v1.0.7
 
 ## Capturas
 
@@ -14,12 +14,13 @@ Aplicación de escritorio en .NET (Windows Forms) para explorar y calcular conju
 
 > Fuente de datos: “Dungeon Master II Spells - Dungeon Master II Solutions - Dungeon Master II - Games - Dungeon Master Encyclopaedia”.
 
-> Novedades v1.0.6.4:
-> - Nueva pantalla **“Objetos”** con listado, búsqueda y filtro por tipo (Espada, Arco, Bastón, Armadura, Escudo, etc.).
-> - Archivo `data/objetos_armas.json` con todas las armas ofensivas (espadas, hachas, mazas, arcos, bastones, bombas, minions, escudos) y armaduras (ligeras, pesadas, cascos, botas) con datos reales (ES/EN) e imágenes.
-> - Vista de **sets de armadura** (Fire, Ra Sar, Mithral, Tech…) con disposición en “maniquí” (casco, torso, piernas, botas, escudo, arma) al activar el filtro "Solo sets".
-> - Ajustes de carga de imágenes de objetos usando `Imagenes.BaseImgPath()` y nuevo visor de imágenes con tamaño optimizado para sprites 16x16.
-> - Pequeñas mejoras de interfaz en la pantalla de Objetos y filtros.
+> Novedades v1.0.7:
+> - Mejora de la vista de **sets de armadura** con fondo de inventario (`img/inven.png`) y colocación precisa de casco, torso, piernas, botas, escudo y arma.
+> - Soporte para **piezas extra** de set (`amulet`, `ring`, `necklace`, `arrows`) con imágenes en `img/objetos/collares/` y posiciones configurables sobre el inventario.
+> - Nuevo panel de herramientas de set en la pantalla **“Objetos”**: botones *Añadir extra*, *Ver coordenadas* y *Generar JSON* visibles solo en modo "Solo sets".
+> - Función de arrastrar y soltar (drag & drop) para recolocar piezas del set y registrar sus coordenadas.
+> - Nuevo formulario **`NuevoSetForm`** para crear sets desde la propia aplicación, con definición de piezas básicas/extras, selección de imágenes y generación de bloque JSON copiable.
+> - Menú de ayuda en `NuevoSetForm` (ES/EN) con guía rápida para crear y guardar nuevos sets en `data/objetos_sets.json`.
 
 ## Características
 
