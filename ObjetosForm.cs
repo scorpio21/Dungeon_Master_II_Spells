@@ -40,11 +40,18 @@ namespace SpellBookWinForms
 
         // Panel de botones relacionados con sets (Añadir extra, coords, JSON)
         private FlowLayoutPanel panelBotonesSet = null!;
+        private Button btnAddExtra = null!;
+        private Button btnCoords = null!;
+        private Button btnJson = null!;
+        private Button btnNuevoSet = null!;
 
         // Último set mostrado, para generar JSON
         private SetArmadura? _setActual;
 
         private readonly bool _en = string.Equals(Settings.Default.Idioma, "EN", StringComparison.OrdinalIgnoreCase);
+
+        // Modo de edición de sets (solo accesible con combinación de teclas)
+        private bool _modoEdicionSets;
 
         private List<Arma> _todas = new();
         private List<SetArmadura> _sets = new();
@@ -166,6 +173,7 @@ namespace SpellBookWinForms
             Text = _en ? "Weapons" : "Armas";
             StartPosition = FormStartPosition.CenterParent;
             Size = new Size(960, 640);
+            KeyPreview = true;
             MinimizeBox = false;
             MaximizeBox = true;
 
@@ -312,7 +320,7 @@ namespace SpellBookWinForms
             stackDerecha.Controls.Add(picObjeto);
             stackDerecha.Controls.Add(panelSet);
 
-            var btnAddExtra = new Button
+            btnAddExtra = new Button
             {
                 Text = _en ? "Add extra" : "Añadir extra",
                 AutoSize = true,
@@ -320,7 +328,7 @@ namespace SpellBookWinForms
             };
             btnAddExtra.Click += (_, __) => CrearExtraVisual();
 
-            var btnCoords = new Button
+            btnCoords = new Button
             {
                 Text = _en ? "Show coords" : "Ver coordenadas",
                 AutoSize = true,
@@ -328,7 +336,7 @@ namespace SpellBookWinForms
             };
             btnCoords.Click += (_, __) => MostrarCoordenadasSet();
 
-            var btnJson = new Button
+            btnJson = new Button
             {
                 Text = _en ? "Generate JSON" : "Generar JSON",
                 AutoSize = true,
@@ -336,7 +344,7 @@ namespace SpellBookWinForms
             };
             btnJson.Click += (_, __) => GenerarJsonSet();
 
-            var btnNuevoSet = new Button
+            btnNuevoSet = new Button
             {
                 Text = _en ? "New set" : "Nuevo set",
                 AutoSize = true,
@@ -370,18 +378,19 @@ namespace SpellBookWinForms
             Load += (_, __) =>
             {
                 CargarDatos();
-                // Si este formulario ya viene en modo solo sets, mostrar botones de set
-                panelBotonesSet.Visible = _soloSets || chkSoloSets.Checked;
+                // Si este formulario ya viene en modo solo sets, mostrar botones de set solo en modo edición
+                ActualizarVisibilidadBotonesSet();
             };
             txtBuscar.TextChanged += (_, __) => RefrescarLista();
             cbTipo.SelectedIndexChanged += (_, __) => RefrescarLista();
             chkSoloSets.CheckedChanged += (_, __) =>
             {
                 RefrescarLista();
-                // Solo mostrar los botones de set cuando estamos en modo solo sets
-                panelBotonesSet.Visible = _soloSets || chkSoloSets.Checked;
+                // Solo mostrar los botones de set cuando estamos en modo solo sets y en modo edición
+                ActualizarVisibilidadBotonesSet();
             };
             lstObjetos.SelectedIndexChanged += (_, __) => MostrarSeleccion();
+            KeyDown += ObjetosForm_KeyDown;
         }
 
 private static bool EsSet(Arma arma)
@@ -544,6 +553,46 @@ private static bool EsSet(Arma arma)
             if (lstObjetos.Items.Count > 0) lstObjetos.SelectedIndex = 0;
         }
 
+        private void ActualizarVisibilidadBotonesSet()
+        {
+            bool soloSets = _soloSets || chkSoloSets.Checked;
+            // El panel solo aparece en modo solo sets
+            panelBotonesSet.Visible = soloSets;
+
+            // "Nuevo set" siempre visible cuando el panel está visible
+            btnNuevoSet.Visible = panelBotonesSet.Visible;
+
+            // El resto de botones (extras / coords / JSON) solo en modo edición
+            bool verHerramientas = panelBotonesSet.Visible && _modoEdicionSets;
+            btnAddExtra.Visible = verHerramientas;
+            btnCoords.Visible = verHerramientas;
+            btnJson.Visible = verHerramientas;
+        }
+
+        private void ObjetosForm_KeyDown(object? sender, KeyEventArgs e)
+        {
+            // Ctrl+F1 para activar/desactivar el modo de edición de sets
+            if (e.Control && e.KeyCode == Keys.F1)
+            {
+                _modoEdicionSets = !_modoEdicionSets;
+                ActualizarVisibilidadBotonesSet();
+
+                string msgEs = _modoEdicionSets
+                    ? "Modo edición de sets ACTIVADO (puedes mover piezas y ver botones de extras)."
+                    : "Modo edición de sets DESACTIVADO (vista normal, sin botones de extras).";
+                string msgEn = _modoEdicionSets
+                    ? "Set edit mode ENABLED (you can move pieces and see extra buttons)."
+                    : "Set edit mode DISABLED (normal view, without extra buttons).";
+
+                MessageBox.Show(_en ? msgEn : msgEs,
+                    _en ? "Set edit mode" : "Modo edición de sets",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                e.Handled = true;
+            }
+        }
+
         private void MostrarSeleccion()
         {
             if (lstObjetos.SelectedItem is not ItemLista item) return;
@@ -580,8 +629,8 @@ private static bool EsSet(Arma arma)
                 lblTipo.Text = set.Tipo.Get(_en);
                 CargarImagen(set.Imagen);
                 panelSet.Visible = true;
-                // Solo mostrar los botones de set cuando estamos viendo sets
-                panelBotonesSet.Visible = _soloSets || chkSoloSets.Checked;
+                // Solo mostrar los botones de set cuando estamos viendo sets, en modo solo sets y edición
+                ActualizarVisibilidadBotonesSet();
 
                 // Recordar el set actual para generar JSON
                 _setActual = set;
@@ -737,6 +786,7 @@ private static bool EsSet(Arma arma)
         // Manejadores de arrastre para las piezas del set
         private void PbSet_MouseDown(object? sender, MouseEventArgs e)
         {
+            if (!_modoEdicionSets) return;
             if (sender is not PictureBox pb || e.Button != MouseButtons.Left) return;
             _draggingSetPb = pb;
             _dragStartMouse = e.Location;
@@ -746,6 +796,7 @@ private static bool EsSet(Arma arma)
 
         private void PbSet_MouseMove(object? sender, MouseEventArgs e)
         {
+            if (!_modoEdicionSets) return;
             if (!_draggingSet || _draggingSetPb == null) return;
 
             var dx = e.X - _dragStartMouse.X;
