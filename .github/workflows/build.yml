@@ -54,33 +54,38 @@ jobs:
       - name: Publish single-file win-x64
         run: >
           dotnet publish ${{ env.PROJECT_FILE }} -c Release -r win-x64 --self-contained true
-          /p:PublishSingleFile=true /p:PublishTrimmed=false -o publish/win-x64
+          /p:PublishSingleFile=true /p:PublishTrimmed=false -o publish/win-x64-singlefile
 
       - name: Copiar archivos necesarios
         shell: pwsh
         run: |
-          $dest = "publish/win-x64"
+          $dest = "publish/win-x64-singlefile"
           if (Test-Path img) { Copy-Item img -Recurse -Destination $dest -Force }
 
       - name: Build installer
         shell: pwsh
         run: |
-          $iscc="${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-          if (!(Test-Path $iscc)) { $iscc="${env:ProgramFiles}\Inno Setup 6\ISCC.exe" }
+          $isccCandidates = @(
+            "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+            "${env:ProgramFiles}\Inno Setup 6\ISCC.exe",
+            'C:\ProgramData\chocolatey\bin\ISCC.exe'
+          )
+          $iscc = $isccCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+          if ([string]::IsNullOrWhiteSpace($iscc)) { throw 'No se encontró ISCC.exe después de instalar Inno Setup.' }
 
-          if (Test-Path $iscc -and (Test-Path "installer.iss")) {
-            & $iscc "/DMyAppVersion=${{ env.RELEASE_VERSION }}" "/O$(pwd)/publish" "installer.iss"
-          }
+          $workspace = $env:GITHUB_WORKSPACE
+          & $iscc "/DMyAppVersion=$env:RELEASE_VERSION" "/O$workspace\publish" "$workspace\installer.iss"
+          if ($LASTEXITCODE -ne 0) { throw "ISCC.exe terminó con código $LASTEXITCODE" }
 
       - name: Crear ZIPs
         shell: pwsh
         run: |
           $version="${{ env.RELEASE_VERSION }}"
-          Compress-Archive -Force publish/win-x64/* publish/${{ env.APP_NAME }}_${version}_win-x64.zip
+          Compress-Archive -Force publish/win-x64-singlefile/* publish/${{ env.APP_NAME }}_${version}_win-x64.zip
 
           Remove-Item -Recurse -Force -ErrorAction SilentlyContinue publish/portable
           New-Item -ItemType Directory -Path publish/portable | Out-Null
-          Copy-Item -Recurse publish/win-x64/* publish/portable/
+          Copy-Item -Recurse publish/win-x64-singlefile/* publish/portable/
           if (Test-Path img) { Copy-Item -Recurse img publish/portable/img }
           Compress-Archive -Force publish/portable/* publish/${{ env.APP_NAME }}_${version}_Portable.zip
 
